@@ -15,10 +15,10 @@ public class ClosedPoly extends Primitive {
 	public int[] origin = { 60, 60 }; // coordinate point of the center of the
 										// triangle: the point bisecting the
 										// midline
-	// A
-	// / \
-	// / \
-	// / \
+	//     A
+	//    / \
+	//   /   \
+	//  /     \
 	// B-------C
 	// letters are coordinates
 	public int origin_x;

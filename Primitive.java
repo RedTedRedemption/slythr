@@ -87,6 +87,7 @@ public class Primitive {
 	}
 
 	public int[] getPhysics_velocity(){
+		//return physics_velocity;
 		return physics_velocity;
 	}
 
@@ -102,7 +103,7 @@ public class Primitive {
 
 	}
 
-	public void setWidth(int i) {
+	public void setWidth(int width) {
 		// TODO Auto-generated method stub
 	}
 
@@ -161,13 +162,15 @@ public class Primitive {
 	}
 
 	public void setPhysics_velocity_y(int magnitude){
-		//physics_velocity_y = magnitude;
+	//	physics_velocity_y = magnitude;
 	}
 
 	public void setPhysics_velocity(int x, int y){
 		//physics_velocity_x = x;
 		//physics_velocity_y = y;
 	}
+
+
 
 	public void enable(){}
 	public void disable(){
@@ -235,5 +238,9 @@ public class Primitive {
 
 	public void move_to_top(){
 		draw_on_top = true;
+	}
+
+	public void applyForce(int x, int y) {
+
 	}
 }

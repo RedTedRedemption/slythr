@@ -30,8 +30,8 @@ public class Image extends Primitive {
     public boolean sprite = false;
     public int sprite_step;
     public String label = "an image object";
-    public static int FIT = 0;
-    public static int SCALE = 1;
+    public static final int FIT = 0;
+    public static final int SCALE = 1;
     public int scaleMode = 1;
     public double scale = 1.0;
     public int image_width;
@@ -166,27 +166,28 @@ public class Image extends Primitive {
     }
 
     public int getHeight() {
-        return this.height;
+        return self_image.getHeight();
+
     }
 
     public int getWidth() {
-        return this.width;
+        return self_image.getWidth();
     }
 
     public void centerx(int x) {
-        origin_x = x - (width / 2);
+        origin_x = x - (getImage_width() / 2);
     }
 
     public int centerx(){
-        return origin_x + (width / 2);
+        return origin_x + (getImage_width() / 2);
     }
 
     public int centery(){
-        return origin_y + (height / 2);
+        return origin_y + (getImage_height() / 2);
     }
 
     public void centery(int y) {
-        origin_y = y - (height / 2);
+        origin_y = y - (getImage_height() / 2);
     }
 
     public void setWidth(int value) {
@@ -254,6 +255,22 @@ public class Image extends Primitive {
 
     public void setFitWidth(int Width) {
         fitWidth = Width;
+    }
+
+    public int getImage_width() {
+        if (scaleMode == FIT) {
+            return fitWidth;
+        } else {
+            return (int) (self_image.getWidth() * scale);
+        }
+    }
+
+    public int getImage_height() {
+        if (scaleMode == FIT) {
+            return fitHeight;
+        } else {
+            return (int) (self_image.getHeight() * scale);
+        }
     }
 
 }

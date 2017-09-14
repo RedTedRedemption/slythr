@@ -18,8 +18,10 @@ public class Game_Window extends JPanel {
     private int window_action_delay = 12;
     public ArrayList<String> input_array = new ArrayList<>();
     public ArrayList<String> input_pressed_array = new ArrayList<>();
-    public ArrayList<Integer> input_array_keycodes = new ArrayList<Integer>();
-    public ArrayList<Integer> input_pressed_array_keycodes = new ArrayList<Integer>();
+    public ArrayList<String> input_released_array = new ArrayList<>();
+    public ArrayList<Integer> input_array_keycodes = new ArrayList<>();
+    public ArrayList<Integer> input_pressed_array_keycodes = new ArrayList<>();
+    public ArrayList<Integer> input_released_array_keycodes = new ArrayList<>();
     private JRootPane rootPane;
     public int timescale = 1;
     private Primitive console_line_0;
@@ -31,7 +33,7 @@ public class Game_Window extends JPanel {
     private char[] console_chars = new char[144];
     private int console_cursor = 0;
     private boolean console_active = false;
-    Primitive cursor;
+
 
     public void addNotify() {
         super.addNotify();
@@ -58,11 +60,7 @@ public class Game_Window extends JPanel {
         for (Primitive console_primitive : console_primitives.makeArrayList()) {
             console_primitive.move_to_top();
         }
-        console_line_3.setpos(5, console_line_3.getHeight());
-        console_line_2.setpos(5, console_line_3.getpos()[1] + console_line_2.getHeight());
-        console_line_1.setpos(5, console_line_2.getpos()[1] + console_line_1.getHeight());
-        console_line_0.setpos(5, console_line_0.getpos()[1] + console_line_0.getHeight());
-        console_input.setpos(5, console_line_0.getpos()[1] + console_input.getHeight());
+
 
 
         fps_readout = new Text("FPS:", 24, this);
@@ -124,6 +122,8 @@ public class Game_Window extends JPanel {
             @Override
             public void keyReleased(KeyEvent e) {
                 input_array.remove(new String(new char[] {e.getKeyChar()}).toLowerCase());
+                input_released_array.add(new String(new char[] {e.getKeyChar()}).toLowerCase());
+                input_released_array_keycodes.add(e.getKeyCode());
             }
         });
 
@@ -225,18 +225,6 @@ public class Game_Window extends JPanel {
         repaint_timer = new Timer(draw_wait, repainter);
         repaint_timer.start();
 
-//        Timer mouse_location_updater_timer = new Timer(12, new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                try {
-//                    cursor.setpos(((int) getMousePosition().getX()), ((int) getMousePosition().getY()));
-//                } catch (NullPointerException exption){
-//                    exption.printStackTrace();
-//                }
-//            }
-//        });
-
-        //mouse_location_updater_timer.start();
         ActionListener periodic_window_actions = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -247,6 +235,8 @@ public class Game_Window extends JPanel {
                 }
                 input_pressed_array.clear();
                 input_pressed_array_keycodes.clear();
+                input_released_array.clear();
+                input_released_array_keycodes.clear();
 
                 if (console_cursor < 0) {
                     console_cursor = 0;
@@ -255,12 +245,13 @@ public class Game_Window extends JPanel {
                 if (console_cursor > 143) {
                     console_cursor = 143;
                 }
-                console_line_3.setpos(5, console_line_3.getHeight());
-                console_line_2.setpos(5, console_line_3.getpos()[1] + console_line_2.getHeight());
-                console_line_1.setpos(5, console_line_2.getpos()[1] + console_line_1.getHeight());
-                console_line_0.setpos(5, console_line_1.getpos()[1] + console_line_0.getHeight());
-                console_input.setpos(5, console_line_0.getpos()[1] + console_input.getHeight());
-
+                if (console_active) {
+                    console_line_3.setpos(5, console_line_3.getHeight());
+                    console_line_2.setpos(5, console_line_3.getpos()[1] + console_line_2.getHeight());
+                    console_line_1.setpos(5, console_line_2.getpos()[1] + console_line_1.getHeight());
+                    console_line_0.setpos(5, console_line_1.getpos()[1] + console_line_0.getHeight());
+                    console_input.setpos(5, console_line_0.getpos()[1] + console_input.getHeight());
+                }
 
 
             }

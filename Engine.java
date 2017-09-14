@@ -275,6 +275,17 @@ public class Engine {
         }).start();
     }
 
+    public static void addEvent(int delay, SlythrEvent event) {
+        new Timer(delay, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (event.trigger()) {
+                    event.action();
+                }
+            }
+        }).start();
+    }
+
     /**
      * Add task to be run once when trigger() returns true.
      *
@@ -326,6 +337,9 @@ public class Engine {
 
     public static void console_command(String console_line) {
         int timesfound = 0;
+        if (console_line.equals("")) {
+            console_print("");
+        }
         for (ConsoleCommand command : consoleCommands) {
             if (console_line.startsWith(command.call_command)) {
                 command.operate(console_line);

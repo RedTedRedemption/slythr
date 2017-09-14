@@ -109,6 +109,7 @@ public class Rect extends Primitive {
 	 * Set the Y physics velocity of the object
 	 * @param magnitude
 	 */
+
 	public void setPhysics_velocity_y(int magnitude){
 		physics_velocity_y = magnitude;
 	}
@@ -119,16 +120,16 @@ public class Rect extends Primitive {
 	 * @param y
 	 */
 	public void setPhysics_velocity(int x, int y){
-		this.physics_velocity_x = x;
-		this.physics_velocity_y = y;
+		physics_velocity_x = x;
+		physics_velocity_y = y;
 	}
 
 	/**
 	 * Get the physics velocity of the object
 	 * @return int[2] of physics velocity
 	 */
-	public int[] getPhysics_Velocity(){
-		return new int[] {this.physics_velocity_x, this.physics_velocity_y};
+	public int[] getPhysics_velocity(){
+		return new int[] {physics_velocity_x, physics_velocity_y};
 	}
 
 
@@ -177,11 +178,11 @@ public class Rect extends Primitive {
 	}
 
 	public int getHeight() {
-		return this.height;
+		return height;
 	}
 
 	public int getWidth() {
-		return this.width;
+		return width;
 	}
 
 	/**
@@ -290,6 +291,11 @@ public class Rect extends Primitive {
 	 */
 	public void setLabel(String identifier){
 		label = identifier;
+	}
+
+	public void applyForce(int x, int y) {
+		physics_velocity_y = physics_velocity_y + y;
+		physics_velocity_x = physics_velocity_x + x;
 	}
 
 
