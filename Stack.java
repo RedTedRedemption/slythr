@@ -167,10 +167,14 @@ public class Stack {
 		return tout;
 	}
 
-	//public Stack dump(){
-        //empty for now, should return the stack (or an ArrayList?) and then clear it...will need to use temporary storage
-        //buffer (i.e. store stack in temp, clear stack, return temp
-	//}
+	public Stack dump() {
+		Stack temp_stack = new Stack();
+		for (Primitive primitive : stack) {
+			temp_stack.add(primitive);
+		}
+		stack.clear();
+		return temp_stack;
+	}
 
 	/**
 	 * Return an array {@code Object[]} of the objects in the stack.
@@ -181,9 +185,15 @@ public class Stack {
 		return stack.toArray();
 	}
 
-	public void enable_all(){
+	public void enable() {
 		for (Primitive primitive : stack) {
 			primitive.enable();
+		}
+	}
+
+	public void disable() {
+		for (Primitive primitive : stack) {
+			primitive.disable();
 		}
 	}
 

@@ -286,9 +286,7 @@ public class Game_Window extends JPanel {
     }
 
     public boolean keyReleased(String key) {
-        System.out.println("SLYTHR WARNING: method keyReleased(String key) is not implemented, it returns false for the moment");
-        return false;
-        //todo: make arraylist for released key and make this method return properly
+        return input_released_array.contains(key);
     }
 
     public boolean mouseOverlapping(Primitive primitive) {

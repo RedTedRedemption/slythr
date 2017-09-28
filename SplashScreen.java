@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SplashScreen extends JWindow {
-    private int duration;
 
     public static JLabel watermark = new JLabel
             ("Powered by SLYTHR", JLabel.CENTER);
@@ -15,7 +14,7 @@ public class SplashScreen extends JWindow {
     private static boolean permitEnd = false;
 
     public SplashScreen(int d) {
-        duration = d;
+        int duration = d;
     }
 
 

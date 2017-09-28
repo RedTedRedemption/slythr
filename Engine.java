@@ -88,6 +88,19 @@ public class Engine {
             }
         });
 
+        Engine.addConsoleCommand("showfps", new ConsoleOperation() {
+            @Override
+            public void operation(String args) {
+                Engine.drawfps();
+            }
+        });
+        Engine.addConsoleCommand("hidefps", new ConsoleOperation() {
+            @Override
+            public void operation(String args) {
+                Engine.stop_drawfps();
+            }
+        });
+
         Engine.addConsoleCommand("exit", new ConsoleOperation() {
             @Override
             public void operation(String args) {
@@ -183,7 +196,7 @@ public class Engine {
      *
      * @return the new game window
      */
-    public static Game_Window add_window(){
+    public static Game_Window addWindow(){
         Game_Window new_window = new Game_Window(frame);
         frame.setContentPane(new_window);
         game_windows.add(new_window);
@@ -196,7 +209,7 @@ public class Engine {
      * @param loop the loop
      * @throws InterruptedException caused by a failure when a Thread.sleep() method is called.
      */
-    public static void add_game_loop(Game_loop loop) throws InterruptedException {
+    public static void addGameLoop(Game_loop loop) throws InterruptedException {
         local_game_loop = loop;
         Thread game_loop_thread = new Thread(new Runnable() {
             @Override

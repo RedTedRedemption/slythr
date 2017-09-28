@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Complex_Stack {
 
-	public CopyOnWriteArrayList<Complex> stack = new CopyOnWriteArrayList<Complex>();
+	public CopyOnWriteArrayList<Complex> stack = new CopyOnWriteArrayList<>();
 
 
 	/**

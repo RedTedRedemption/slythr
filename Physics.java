@@ -76,10 +76,8 @@ public class Physics {
 
 		int bx = ax + obj.getWidth();
 		// System.out.println(bx);
-		int by = ay;
 		// System.out.println(by);
 
-		int cx = ax;
 		// System.out.println(cx);
 		int cy = ay + obj.getHeight();
 		// System.out.println(cy);
@@ -87,11 +85,10 @@ public class Physics {
 		int dx = ax + obj.getWidth();
 		int dy = ay + obj.getHeight();
 
-		int[] tout = { ax, ay, bx, by, cx, cy, dx, dy };
 		// System.out.println("retrived rect points: " + ax + " " + ay + " " +
 		// bx);
 		// System.out.println(tout);
-		return tout;
+		return new int[]{ ax, ay, bx, ay, ax, cy, dx, dy };
 	}
 
 	public static boolean pointInObj(int x, int y, Primitive obj) {
@@ -110,17 +107,9 @@ public class Physics {
 		// System.out.println("Starting collision test");
 		int[] point_arr1 = getPointsRect(obj1);
 		int[] point_arr2 = getPointsRect(obj2);
-		if (pointInObj(point_arr1[0], point_arr1[1], obj2) || pointInObj(point_arr1[0], point_arr1[5], obj2)
-				|| pointInObj(point_arr1[2], point_arr1[1], obj2)
-				|| pointInObj(point_arr1[2], point_arr1[5], obj2)) {
-			// System.out.println("collision test returning true");
-			return true;
-		} else {
-            // System.out.print("collision test returning true");
-            return pointInObj(point_arr2[0], point_arr2[1], obj1) || pointInObj(point_arr2[0], point_arr2[5], obj1)
-                    || pointInObj(point_arr2[2], point_arr2[1], obj1)
-                    || pointInObj(point_arr2[2], point_arr2[5], obj1);
-		}
+		// System.out.println("collision test returning true");
+		return pointInObj(point_arr1[0], point_arr1[1], obj2) || pointInObj(point_arr1[0], point_arr1[5], obj2) || pointInObj(point_arr1[2], point_arr1[1], obj2) || pointInObj(point_arr1[2], point_arr1[5], obj2) || pointInObj(point_arr2[0], point_arr2[1], obj1) || pointInObj(point_arr2[0], point_arr2[5], obj1) || pointInObj(point_arr2[2], point_arr2[1], obj1) || pointInObj(point_arr2[2], point_arr2[5], obj1);
+// System.out.print("collision test returning true");
 
 	}
 

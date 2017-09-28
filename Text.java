@@ -118,8 +118,7 @@ public class Text extends Primitive{
     }
 
     public int[] getPos(){
-        int coords[] = {origin_x, origin_y};
-        return coords;
+		return new int[]{origin_x, origin_y};
     }
 
 

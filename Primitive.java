@@ -212,7 +212,13 @@ public class Primitive {
 	}
 
 	public Primitive getBounding_box(){
-		return new Primitive();
+		try {
+			throw new SlythrError("attempted to call method getBounding_box() from parent class, could be an error in SLYTHR");
+
+		} catch (SlythrError slythrError) {
+			slythrError.printStackTrace();
+			return new Primitive();
+		}
 	}
 
 	public void draw_bounding_box(Graphics g){
@@ -242,5 +248,21 @@ public class Primitive {
 
 	public void applyForce(int x, int y) {
 
+	}
+
+	public void setEndpoint_x(int x) {
+		try {
+			throw new SlythrError("attempted to call method setEndpoint_x() from parent class, could be an error in SLYTHR");
+		} catch (SlythrError slythrError) {
+			slythrError.printStackTrace();
+		}
+	}
+
+	public void setEndpoint_y(int y) {
+		try {
+			throw new SlythrError("attempted to call method setEndpoint_y() from parent class, could be an error in SLYTHR");
+		} catch (SlythrError slythrError) {
+			slythrError.printStackTrace();
+		}
 	}
 }

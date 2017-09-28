@@ -33,9 +33,8 @@ public class Audio implements Runnable {
      */
     public Audio(String path) throws IOException, LineUnavailableException {
         SplashScreen.status.setText("loading audio file " + path);
-        String bip = path;
         self_path = path;
-        Media hit = new Media(new File(bip).toURI().toString());
+        Media hit = new Media(new File(path).toURI().toString());
         mediaPlayer = new MediaPlayer(hit);
         audios.add(this);
     }
