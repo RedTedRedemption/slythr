@@ -33,6 +33,7 @@ public class Game_Window extends JPanel {
     private char[] console_chars = new char[144];
     private int console_cursor = 0;
     private boolean console_active = false;
+    public Stack point_buffer = new Stack();
 
 
     public void addNotify() {
@@ -214,9 +215,9 @@ public class Game_Window extends JPanel {
             public void action() {
                 console_active = !console_active;
                 if (console_active) {
-                    console_primitives.enable_all();
+                    console_primitives.enable();
                 } else {
-                    console_primitives.disable_all();
+                    console_primitives.disable();
                 }
             }
         });
@@ -269,6 +270,8 @@ public class Game_Window extends JPanel {
         g.setColor(Color.blue);
         g.fillRect(0, 0, Engine.width, Engine.height);
         Engine.rendStack.draw(g);
+        point_buffer.draw(g);
+        point_buffer.flush();
         Engine.fps_count = Engine.fps_count + 1;
         Physics.simulate(timescale, g);
     }
@@ -295,5 +298,14 @@ public class Game_Window extends JPanel {
         } catch (java.lang.NullPointerException e) {
             return false;
         }
+    }
+
+    public void drawPoint(int x, int y, Color color) {
+        Rect newrect = new Rect(false);
+        newrect.setpos(x, y);
+        newrect.setHeight(1);
+        newrect.setWidth(1);
+        newrect.setColor(color);
+        point_buffer.add(newrect);
     }
 }

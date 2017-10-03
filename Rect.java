@@ -34,6 +34,10 @@ public class Rect extends Primitive {
 		Engine.rendStack.add(this);
 	}
 
+	public Rect(boolean dontAdd) {
+
+	}
+
 
 	/**
 	 * Set the attributes of the rect quickly.
@@ -94,6 +98,12 @@ public class Rect extends Primitive {
 		color_r = R;
 		color_g = G;
 		color_b = B;
+	}
+
+	public void setColor(Color color) {
+		color_r = color.getRed();
+		color_g = color.getGreen();
+		color_b = color.getBlue();
 	}
 
 

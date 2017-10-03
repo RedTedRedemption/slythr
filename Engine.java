@@ -11,51 +11,30 @@ import java.util.ArrayList;
  */
 public class Engine {
 
-    /**
-     * The constant height of the window.
-     */
+
     public static int height;
-    /**
-     * The constant width of the window.
-     */
+
     public static int width;
-    /**
-     * The constant frame.
-     */
+
     public static JFrame frame = new JFrame("Slythr Game");
-    /**
-     * The constant rendStack, containing all initialized primitives. Objects in this stack are drawn periodically.
-     */
+
     public static Stack rendStack = new Stack();
-    /**
-     * The constant loop_delay.
-     */
+
     public static int loop_delay = 6;
     private static Game_loop local_game_loop;
-    /**
-     * The constant running.
-     */
+
     public static boolean running = true;
     private static boolean ready = false;
-    /**
-     * The constant fps_count.
-     */
+
     public static int fps_count;
-    /**
-     * The constant fps.
-     */
+
     public static int fps;
-    /**
-     * The constant drawfps.
-     */
+
     public static boolean drawfps = false;
     private static ArrayList<Game_Window> game_windows = new ArrayList();
     private static Thread splashThread = new Thread(new SplashThread());
     private static ArrayList<ConsoleCommand> consoleCommands = new ArrayList<>();
     public static String[] previous_commands = {"", "", "", ""};
-    /**
-     * The constant animation_buffer.
-     */
     public static Animation_Buffer animation_buffer = new Animation_Buffer();
 
 
@@ -72,11 +51,15 @@ public class Engine {
         width = Width;
         height = Height;
 
-        Animation.bind_default_animation_buffer(animation_buffer);
+
 
         System.out.println("Showing splash");
         splashThread.start();
 
+        splashStatus("binding default animation buffer");
+        Animation.bind_default_animation_buffer(animation_buffer);
+
+        splashStatus("adding default console commands");
         addConsoleCommand("help", new ConsoleOperation() {
             @Override
             public void operation(String args) {
@@ -108,6 +91,8 @@ public class Engine {
                 System.exit(0);
             }
         });
+
+        splashStatus("creating threads");
 
         Thread fps_thread = new Thread(new Runnable() {
             @Override
@@ -141,7 +126,7 @@ public class Engine {
         Thread engine_thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.print("waiting for splash to end...");
+                System.out.println("waiting for splash to end...");
                 while (!ready) {
                     //wait for splash to end
                     try {
@@ -157,7 +142,7 @@ public class Engine {
             }
         }, "SLYTHR engine thread");
 
-        splashStatus("starting background threads...");
+        splashStatus("starting background threads");
         animation_thread.start();
 
         fps_thread.start();
@@ -254,7 +239,7 @@ public class Engine {
     public static void splashStatus(String text){
         SplashScreen.setStatus(text);
         System.out.println(text);
-        console_print(text);
+
     }
 
     /**
@@ -324,13 +309,22 @@ public class Engine {
     /**
      * Add a subroutine that will run once every 12 seconds.
      *
-     * @param subroutine the subroutine
+     * @param subRoutine the subroutine
      */
-    public static void addSubRoutine(SubRoutine subroutine){
+    public static void addSubRoutine(SubRoutine subRoutine){
         new Timer(12, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                subroutine.routine();
+                subRoutine.routine();
+            }
+        }).start();
+    }
+
+    public static void addSubRoutine(int delay, SubRoutine subRoutine){
+        new Timer(delay, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                subRoutine.routine();
             }
         }).start();
     }
@@ -370,7 +364,7 @@ public class Engine {
     }
 
     public static void console_print(String s) {
-        System.out.print(s);
+        System.out.println(s);
         previous_commands[3] = previous_commands[2];
         previous_commands[2] = previous_commands[1];
         previous_commands[1] = previous_commands[0];
