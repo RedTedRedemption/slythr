@@ -8,6 +8,7 @@ public class Evar {
     static String os;
     static double master_volume = 1;
 
+
     public static void init(){
         if (System.getProperty("os.name").contains("win")){
             os = "win";

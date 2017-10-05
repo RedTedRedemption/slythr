@@ -297,4 +297,9 @@ public class Line extends Primitive {
         endpoint_y = y;
     }
 
+    public void setEndpoint(int x, int y) {
+        endpoint_x = x;
+        endpoint_y = y;
+    }
+
 }

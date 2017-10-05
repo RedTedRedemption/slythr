@@ -265,4 +265,12 @@ public class Primitive {
 			slythrError.printStackTrace();
 		}
 	}
+
+	public void setEndpoint(int x, int y) {
+		try {
+			throw new SlythrError("attempted to call method setEndpoint() from parent class, could be an error in SLYTHR");
+		} catch (SlythrError slythrError) {
+			slythrError.printStackTrace();
+		}
+	}
 }

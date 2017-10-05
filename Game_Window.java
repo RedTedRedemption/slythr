@@ -201,7 +201,9 @@ public class Game_Window extends JPanel {
                         //pass;
                     }
                 }
-                repaint();
+                if ( (boolean) WindowHint.windowHint_redraw.value) {
+                    repaint();
+                }
             }
         };
 
@@ -267,8 +269,10 @@ public class Game_Window extends JPanel {
 
     public void paintComponent(Graphics g) {
         local_g = g;
-        g.setColor(Color.blue);
-        g.fillRect(0, 0, Engine.width, Engine.height);
+        if ( (boolean) WindowHint.windowHint_redraw.value) {
+            g.setColor(Color.blue);
+            g.fillRect(0, 0, Engine.width, Engine.height);
+        }
         Engine.rendStack.draw(g);
         point_buffer.draw(g);
         point_buffer.flush();

@@ -30,6 +30,10 @@ public class Engine {
 
     public static int fps;
 
+    //WindowHint tags
+
+    public static final int WINDOW_HINT_REDRAW = 1;
+
     public static boolean drawfps = false;
     private static ArrayList<Game_Window> game_windows = new ArrayList();
     private static Thread splashThread = new Thread(new SplashThread());
@@ -371,6 +375,13 @@ public class Engine {
         previous_commands[0] = s;
     }
 
+    public static void windowHint(int tag, Object value) {
+        for (WindowHint windowHint : WindowHint.windowHints) {
+            if (windowHint.tag == tag) {
+                windowHint.setValue(value);
+            }
+        }
+    }
 
 
 }
