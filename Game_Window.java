@@ -270,7 +270,7 @@ public class Game_Window extends JPanel {
     public void paintComponent(Graphics g) {
         local_g = g;
         if ( (boolean) WindowHint.windowHint_redraw.value) {
-            g.setColor(Color.blue);
+            g.setColor(((Color) WindowHint.windowHint_clear_color.value));
             g.fillRect(0, 0, Engine.width, Engine.height);
         }
         Engine.rendStack.draw(g);

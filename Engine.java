@@ -33,13 +33,14 @@ public class Engine {
     //WindowHint tags
 
     public static final int WINDOW_HINT_REDRAW = 1;
+    public static final int WINDOW_HINT_CLEAR_COLOR = 2;
 
     public static boolean drawfps = false;
-    private static ArrayList<Game_Window> game_windows = new ArrayList();
-    private static Thread splashThread = new Thread(new SplashThread());
-    private static ArrayList<ConsoleCommand> consoleCommands = new ArrayList<>();
+    private static ArrayList<Game_Window> game_windows;
+    private static Thread splashThread;
+    private static ArrayList<ConsoleCommand> consoleCommands;
     public static String[] previous_commands = {"", "", "", ""};
-    public static Animation_Buffer animation_buffer = new Animation_Buffer();
+    public static Animation_Buffer animation_buffer;
 
 
     /**
@@ -49,16 +50,27 @@ public class Engine {
      * @param Width  the width of the window
      */
     public static void launch(int Height, int Width){
-        System.out.println("Initializing engine...");
+        splashStatus("Initializing Engine...");
+        splashThread = new Thread(new SplashThread());
+        System.out.println("Showing splash");
+        splashThread.start();
         Evar.init();
+        WindowHint.init();
+
+        //initializing variables
+        splashStatus("Initializing Variables...");
+        game_windows = new ArrayList<>();
+        consoleCommands = new ArrayList<>();
+        animation_buffer = new Animation_Buffer();
+        rendStack = new Stack();
 
         width = Width;
         height = Height;
 
 
 
-        System.out.println("Showing splash");
-        splashThread.start();
+
+
 
         splashStatus("binding default animation buffer");
         Animation.bind_default_animation_buffer(animation_buffer);
@@ -375,12 +387,33 @@ public class Engine {
         previous_commands[0] = s;
     }
 
-    public static void windowHint(int tag, Object value) {
+    public static void setWindow_hint(int tag, Object value) {
         for (WindowHint windowHint : WindowHint.windowHints) {
             if (windowHint.tag == tag) {
                 windowHint.setValue(value);
             }
         }
+    }
+
+    public static void throwFatalError(SlythrError error) {
+        JOptionPane.showMessageDialog(frame, error.getMessage() + "\n" + error.toString(), "Slythr Error", JOptionPane.ERROR_MESSAGE);
+        error.printStackTrace();
+        System.exit(1);
+    }
+
+    public static Object getWindow_hint(int Tag) {
+        for (WindowHint windowHint : WindowHint.windowHints) {
+            if (windowHint.tag == Tag) {
+                return windowHint.value;
+            }
+        }
+        try {
+            throw new SlythrError("SLYTHR ERROR: INVALID WINDOW_HINT TAG" + Integer.toString(Tag));
+        } catch (SlythrError slythrError) {
+            Engine.throwFatalError(slythrError);
+        }
+        return null;
+
     }
 
 
