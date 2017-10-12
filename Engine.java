@@ -32,11 +32,12 @@ public class Engine {
 
     //WindowHint tags
 
-    public static final int WINDOW_HINT_REDRAW = 1;
-    public static final int WINDOW_HINT_CLEAR_COLOR = 2;
+    public static final int WINDOW_HINT_REDRAW = 0;
+    public static final int WINDOW_HINT_CLEAR_COLOR = 1;
+    public static final int WINDOW_HINT_REDRAW_DELAY = 2;
 
     public static boolean drawfps = false;
-    private static ArrayList<Game_Window> game_windows;
+    public static ArrayList<Game_Window> game_windows;
     private static Thread splashThread;
     private static ArrayList<ConsoleCommand> consoleCommands;
     public static String[] previous_commands = {"", "", "", ""};
@@ -404,7 +405,7 @@ public class Engine {
     public static Object getWindow_hint(int Tag) {
         for (WindowHint windowHint : WindowHint.windowHints) {
             if (windowHint.tag == Tag) {
-                return windowHint.value;
+                return windowHint.getValue();
             }
         }
         try {

@@ -225,7 +225,7 @@ public class Game_Window extends JPanel {
         });
 
 
-        repaint_timer = new Timer(draw_wait, repainter);
+        repaint_timer = new Timer(((int) Engine.getWindow_hint(Engine.WINDOW_HINT_REDRAW_DELAY)), repainter);
         repaint_timer.start();
 
         ActionListener periodic_window_actions = new ActionListener() {
