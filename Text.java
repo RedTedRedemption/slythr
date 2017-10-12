@@ -17,8 +17,8 @@ public class Text extends Primitive{
 	public Font use_font;
 	public Resource self_font;// = new slythr.SFont(Font.BOLD, "Serif");
 	public Color self_color = Color.white;
-	public int origin_x = 0;
-	public int origin_y = 0;
+	public double origin_x = 0;
+	public double origin_y = 0;
 	public int self_size;
 	public Graphics graph;
 	public boolean enabled = true;
@@ -92,12 +92,12 @@ public class Text extends Primitive{
 		bounding_box.setpos(this.getpos()[0], this.getpos()[1] - bounding_box.getHeight());
 	}
 
-	public void centerx(int x){
+	public void centerx(double x){
 		origin_x = x - (this.getBounding_box().getWidth() / 2);
 	}
 
-	public void centery(int y){
-		origin_y = y - (this.getBounding_box().getHeight() / 2);
+	public void centery(double y){
+		origin_y = y - (this.getBounding_box().getHeight() / 2.0);
 
 	}
 
@@ -108,17 +108,15 @@ public class Text extends Primitive{
     }
 
      //todo -- make these methods work
-	public int getHeight() {
-
+	public double getHeight() {
 		return getBounding_box().getHeight();
 	}
-    public int getWidth(){
-
+    public double getWidth(){
 		return getBounding_box().getWidth();
     }
 
-    public int[] getPos(){
-		return new int[]{origin_x, origin_y};
+    public double[] getPos(){
+		return new double[]{origin_x, origin_y};
     }
 
 
@@ -144,7 +142,7 @@ public class Text extends Primitive{
 		if (enabled) {
 			g.setColor(self_color);
 			g.setFont(self_font.getFont(self_size));
-			g.drawString(self_content, origin_x, origin_y);
+			g.drawString(self_content, roundAndCast(origin_x), roundAndCast(origin_y));
 		}
 	}
 
@@ -161,8 +159,8 @@ public class Text extends Primitive{
 		origin_y = Y;
 	}
 
-	public int[] getpos() {
-		return new int[] {origin_x, origin_y};
+	public double[] getpos() {
+		return new double[] {origin_x, origin_y};
 
 	}
 
@@ -196,7 +194,7 @@ public class Text extends Primitive{
 
 	public void draw_bounding_box(Graphics g){
 		g.setColor(new Color(0, 255, 0));
-		g.drawRect(this.getBounding_box().getpos()[0], this.getBounding_box().getpos()[1], this.getBounding_box().getWidth(), this.getBounding_box().getHeight());
+		g.drawRect(roundAndCast(this.getBounding_box().getpos()[0]), roundAndCast(this.getBounding_box().getpos()[1]), roundAndCast(this.getBounding_box().getWidth()), roundAndCast(this.getBounding_box().getHeight()));
 	}
 }
 
