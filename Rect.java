@@ -303,7 +303,7 @@ public class Rect extends Primitive {
 		label = identifier;
 	}
 
-	public void applyForce(int x, int y) {
+	public void applyForce(double x, double y) {
 		physics_velocity_y = physics_velocity_y + y;
 		physics_velocity_x = physics_velocity_x + x;
 	}

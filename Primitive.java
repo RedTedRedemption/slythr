@@ -246,7 +246,7 @@ public class Primitive {
 		draw_on_top = true;
 	}
 
-	public void applyForce(int x, int y) {
+	public void applyForce(double x, double y) {
 
 	}
 
