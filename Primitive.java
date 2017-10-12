@@ -9,17 +9,17 @@ import java.awt.*;
 
 public class Primitive {
 
-	public int[] physics_velocity;
-	public int height;
-	public int width;
-	public int origin_x;
-	public int origin_y;
-	public int[] origin;
-	public int center_x;
-	public int center_y;
-	public int self_size;
-	public int physics_velocity_x;
-	public int physics_velocity_y;
+	public double[] physics_velocity;
+	public double height;
+	public double width;
+	public double origin_x;
+	public double origin_y;
+	public double[] origin;
+	public double center_x;
+	public double center_y;
+	public double self_size;
+	public double physics_velocity_x;
+	public double physics_velocity_y;
 	public boolean enabled = true;
 	public Font use_font;
 	public Animation self_animation;
@@ -45,12 +45,12 @@ public class Primitive {
 		System.out.println("drawing from primitive");
 	}
 
-	public void setpos(int x, int y) {
-		System.out.println("moving from primitive");
+	public void setpos(double x, double y) {
+		System.out.println("setting position from primitive");
 	}
 
-	public int[] getpos() {
-		return new int[]{ 0, 0 };
+	public double[] getpos() {
+		return new double[]{ 0, 0 };
 
 	}
 
@@ -58,7 +58,7 @@ public class Primitive {
 
 	}
 
-	public void setAttributes(int x, int y, int Height, int Width, int r, int g, int b) {
+	public void setAttributes(double x, double y, double Height, double Width, int r, int g, int b) {
 		// sets attributes of primitive object
 	}
 
@@ -69,7 +69,7 @@ public class Primitive {
 	public void centerx(int x, Graphics g) {
 	}
 
-	public int centerx(){
+	public double centerx(){
 		return 1;
 	}
 
@@ -78,7 +78,7 @@ public class Primitive {
 		// sets origin to align center y to this coordinate
 	}
 
-	public int centery(){
+	public double centery(){
 		return 1;
 	}
 
@@ -86,7 +86,7 @@ public class Primitive {
 
 	}
 
-	public int[] getPhysics_velocity(){
+	public double[] getPhysics_velocity(){
 		//return physics_velocity;
 		return physics_velocity;
 	}
@@ -123,11 +123,11 @@ public class Primitive {
 
 	}
 
-	public int getHeight(){
+	public double getHeight(){
 		return -1;
 	}
 
-	public int getWidth() {
+	public double getWidth() {
 		return -1;
 	}
 
@@ -272,5 +272,9 @@ public class Primitive {
 		} catch (SlythrError slythrError) {
 			slythrError.printStackTrace();
 		}
+	}
+
+	public int roundAndCast(double d) {
+		return ((int) Math.round(d));
 	}
 }

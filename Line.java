@@ -96,8 +96,8 @@ public class Line extends Primitive {
      * Get the physics velocity of the object
      * @return int[2] of physics velocity
      */
-    public int[] getPhysics_velocity(){
-        return new int[] {physics_velocity_x, physics_velocity_y};
+    public double[] getPhysics_velocity(){
+        return new double[] {physics_velocity_x, physics_velocity_y};
     }
 
 
@@ -126,15 +126,15 @@ public class Line extends Primitive {
      * @param time Scale the distance by this factor
      */
     public void move(double time){
-        setpos(getpos()[0] + (int)(physics_velocity_x * time), getpos()[1] + (int)(physics_velocity_y * time));
+        setpos((double) getpos()[0] + (physics_velocity_x * time), (double) getpos()[1] + (physics_velocity_y * time));
     }
 
     /**
      * Get the object's position
      * @return int[2] of {@code {X, Y}}
      */
-    public int[] getpos() {
-        return new int[]{ origin_x, origin_y };
+    public double[] getpos() {
+        return new double[]{ origin_x, origin_y };
 
     }
 
@@ -145,11 +145,11 @@ public class Line extends Primitive {
 
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
@@ -165,7 +165,7 @@ public class Line extends Primitive {
      * Get the X position of the center of the object
      * @return
      */
-    public int centerx(){
+    public double centerx(){
         updateMidpoint();
         return origin_x + (width / 2);
     }
@@ -174,7 +174,7 @@ public class Line extends Primitive {
      * Get the Y position of the center of the object
      * @return
      */
-    public int centery(){
+    public double centery(){
         updateMidpoint();
         return origin_y + (height / 2);
     }

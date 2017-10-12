@@ -179,8 +179,8 @@ public class ClosedPoly extends Primitive {
 		updatePoints();
 	}
 
-	public int[] getpos() {
-        return new int[]{ origin[0], origin[1] };
+	public double[] getpos() {
+        return new double[]{ origin[0], origin[1] };
 	}
 
 }

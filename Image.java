@@ -153,8 +153,8 @@ public class Image extends Primitive {
     public void move(double time){
         setpos(getpos()[0] + (int)(physics_velocity_x * time), getpos()[1] + (int)(physics_velocity_y * time));
     }
-    public int[] getpos() {
-        return new int[]{ origin_x, origin_y };
+    public double[] getpos() {
+        return new double[]{ origin_x, origin_y };
 
     }
 
@@ -165,12 +165,12 @@ public class Image extends Primitive {
 
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return self_image.getHeight();
 
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return self_image.getWidth();
     }
 
@@ -178,11 +178,11 @@ public class Image extends Primitive {
         origin_x = x - (getImage_width() / 2);
     }
 
-    public int centerx(){
+    public double centerx(){
         return origin_x + (getImage_width() / 2);
     }
 
-    public int centery(){
+    public double centery(){
         return origin_y + (getImage_height() / 2);
     }
 

@@ -43,10 +43,10 @@ public class Physics {
 	 */
 	public boolean castRay(int startx, int starty, int endx, Primitive target) {
 		System.out.println("casting ray");
-		int targtop = getPointsRect(target)[1];
-		int targbot = getPointsRect(target)[5];
-		int targleft = getPointsRect(target)[0];
-		int targright = getPointsRect(target)[3];
+		double targtop = getPointsRect(target)[1];
+		double targbot = getPointsRect(target)[5];
+		double targleft = getPointsRect(target)[0];
+		double targright = getPointsRect(target)[3];
 		if (starty <= targbot && starty >= targtop) {
 			for (int i = startx; i <= endx; i = i + 1) {
 				System.out.println("casting ray at point offset " + i);
@@ -60,7 +60,7 @@ public class Physics {
 		return false;
 	}
 
-	public static int[] getPointsRect(Primitive obj) {
+	public static double[] getPointsRect(Primitive obj) {
 		// [0, 1] [2, 3]
 		// A----------B
 		// |          |
@@ -69,31 +69,31 @@ public class Physics {
 		// C----------D
 		// [4,5] [6, 7]
 
-		int ax = obj.getpos()[0];
+		double ax = obj.getpos()[0];
 		// System.out.println(ax);
-		int ay = obj.getpos()[1];
+		double ay = obj.getpos()[1];
 		// System.out.println(ay);
 
-		int bx = ax + obj.getWidth();
+		double bx = ax + obj.getWidth();
 		// System.out.println(bx);
 		// System.out.println(by);
 
 		// System.out.println(cx);
-		int cy = ay + obj.getHeight();
+		double cy = ay + obj.getHeight();
 		// System.out.println(cy);
 
-		int dx = ax + obj.getWidth();
-		int dy = ay + obj.getHeight();
+		double dx = ax + obj.getWidth();
+		double dy = ay + obj.getHeight();
 
 		// System.out.println("retrived rect points: " + ax + " " + ay + " " +
 		// bx);
 		// System.out.println(tout);
-		return new int[]{ ax, ay, bx, ay, ax, cy, dx, dy };
+		return new double[]{ ax, ay, bx, ay, ax, cy, dx, dy };
 	}
 
-	public static boolean pointInObj(int x, int y, Primitive obj) {
+	public static boolean pointInObj(double x, double y, Primitive obj) {
 		// System.out.println("testing for point within object...");
-		int[] point_arr = getPointsRect(obj);
+		double[] point_arr = getPointsRect(obj);
 		// System.out.println("Sample of point array: " + point_arr[0] + " " +
 		// point_arr[1]);
         // System.out.println("point is in object");
@@ -105,8 +105,8 @@ public class Physics {
 //		obj1.update();
 //		obj2.update();
 		// System.out.println("Starting collision test");
-		int[] point_arr1 = getPointsRect(obj1);
-		int[] point_arr2 = getPointsRect(obj2);
+		double[] point_arr1 = getPointsRect(obj1);
+		double[] point_arr2 = getPointsRect(obj2);
 		// System.out.println("collision test returning true");
 		return pointInObj(point_arr1[0], point_arr1[1], obj2) || pointInObj(point_arr1[0], point_arr1[5], obj2) || pointInObj(point_arr1[2], point_arr1[1], obj2) || pointInObj(point_arr1[2], point_arr1[5], obj2) || pointInObj(point_arr2[0], point_arr2[1], obj1) || pointInObj(point_arr2[0], point_arr2[5], obj1) || pointInObj(point_arr2[2], point_arr2[1], obj1) || pointInObj(point_arr2[2], point_arr2[5], obj1);
 // System.out.print("collision test returning true");

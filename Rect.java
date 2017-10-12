@@ -12,14 +12,14 @@ public class Rect extends Primitive {
 	public int color_r = 255;
 	public int color_g = 255;
 	public int color_b = 255;
-	int center_x;
-	int center_y;
-	public int origin_x = 0;
-	public int origin_y = 0;
-	public int height = 20;
-	public int width = 20;
-	public int physics_velocity_x = 0;
-	public int physics_velocity_y = 0;
+	double center_x;
+	double center_y;
+	public double origin_x = 0;
+	public double origin_y = 0;
+	public double height = 20;
+	public double width = 20;
+	public double physics_velocity_x = 0;
+	public double physics_velocity_y = 0;
 	public boolean enabled = true;
 	public Animation self_animation;
 	public boolean sprite = false;
@@ -49,7 +49,7 @@ public class Rect extends Primitive {
 	 * @param g Color value for the Green channel between 0 and 255
 	 * @param b Color value for the Blue channel between 0 and 255
 	 */
-	public void setAttributes(int x, int y, int Height, int Width, int r, int g, int b) {
+	public void setAttributes(double x, double y, double Height, double Width, int r, int g, int b) {
 
 		origin_x = x;
 		origin_y = y;
@@ -58,8 +58,8 @@ public class Rect extends Primitive {
 		color_r = r;
 		color_g = g;
 		color_b = b;
-		center_x = x - (width / 2);
-		center_y = y - (height / 2);
+		center_x = x - (width / 2.0);
+		center_y = y - (height / 2.0);
 		sprite_step = 0;
 
 
@@ -84,7 +84,7 @@ public class Rect extends Primitive {
 		// System.out.println("drawing from rect");
 		if (enabled) {
 			g.setColor(new Color(color_r, color_g, color_b));
-			g.fillRect(origin_x, origin_y, width, height);
+			g.fillRect(roundAndCast(origin_x), roundAndCast(origin_y), roundAndCast(width), roundAndCast(height));
 		}
 	}
 
@@ -138,8 +138,8 @@ public class Rect extends Primitive {
 	 * Get the physics velocity of the object
 	 * @return int[2] of physics velocity
 	 */
-	public int[] getPhysics_velocity(){
-		return new int[] {physics_velocity_x, physics_velocity_y};
+	public double[] getPhysics_velocity(){
+		return new double[] {physics_velocity_x, physics_velocity_y};
 	}
 
 
@@ -168,30 +168,30 @@ public class Rect extends Primitive {
 	 * @param time Scale the distance by this factor
 	 */
 	public void move(double time){
-		setpos(getpos()[0] + (int)(physics_velocity_x * time), getpos()[1] + (int)(physics_velocity_y * time));
+		setpos(getpos()[0] + (physics_velocity_x * time), getpos()[1] + (physics_velocity_y * time));
 	}
 
 	/**
 	 * Get the object's position
 	 * @return int[2] of {@code {X, Y}}
 	 */
-	public int[] getpos() {
-		return new int[]{ origin_x, origin_y };
+	public double[] getpos() {
+		return new double[]{ origin_x, origin_y };
 
 	}
 
 	public void getSizes() {
-		int[] tout = { origin_x, origin_y, height, width, color_r, color_g, color_b };
+		double[] tout = { origin_x, origin_y, height, width, color_r, color_g, color_b };
 		//System.out.print("sizes are: ");
 		//System.out.println(tout[0] + " " + tout[1] + " " + tout[2] + " " + tout[3]);
 
 	}
 
-	public int getHeight() {
+	public double getHeight() {
 		return height;
 	}
 
-	public int getWidth() {
+	public double getWidth() {
 		return width;
 	}
 
@@ -207,7 +207,7 @@ public class Rect extends Primitive {
 	 * Get the X position of the center of the object
 	 * @return
 	 */
-	public int centerx(){
+	public double centerx(){
 		return origin_x + (width / 2);
 	}
 
@@ -215,7 +215,7 @@ public class Rect extends Primitive {
 	 * Get the Y position of the center of the object
 	 * @return
 	 */
-	public int centery(){
+	public double centery(){
 		return origin_y + (height / 2);
 	}
 
