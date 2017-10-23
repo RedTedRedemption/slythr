@@ -34,6 +34,8 @@ public class Game_Window extends JPanel {
     private int console_cursor = 0;
     private boolean console_active = false;
     public Stack point_buffer = new Stack();
+    public static Color redrawColor = Color.blue;
+    public static boolean redraw = (boolean) WindowHint.windowHint_redraw.value;
 
 
     public void addNotify() {
@@ -227,41 +229,82 @@ public class Game_Window extends JPanel {
 
         repaint_timer = new Timer(((int) Engine.getWindow_hint(Engine.WINDOW_HINT_REDRAW_DELAY)), repainter);
         repaint_timer.start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                repaint_timer.start();
+//            }
+//        }).start();
 
-        ActionListener periodic_window_actions = new ActionListener() {
+//
+//        ActionListener periodic_window_actions = new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
+//                fps_readout.setpos(Engine.width - fps_readout.getWidth(), fps_readout.getHeight());
+//                if (console_active) {
+//                    console_input.setText(">" + new String(console_chars));
+//                }
+//                input_pressed_array.clear();
+//                input_pressed_array_keycodes.clear();
+//                input_released_array.clear();
+//                input_released_array_keycodes.clear();
+//
+//                if (console_cursor < 0) {
+//                    console_cursor = 0;
+//                }
+//
+//                if (console_cursor > 143) {
+//                    console_cursor = 143;
+//                }
+//                if (console_active) {
+//                    console_line_3.setpos(5, console_line_3.getHeight());
+//                    console_line_2.setpos(5, console_line_3.getpos()[1] + console_line_2.getHeight());
+//                    console_line_1.setpos(5, console_line_2.getpos()[1] + console_line_1.getHeight());
+//                    console_line_0.setpos(5, console_line_1.getpos()[1] + console_line_0.getHeight());
+//                    console_input.setpos(5, console_line_0.getpos()[1] + console_input.getHeight());
+//                }
+//
+//
+//            }
+//        };
+
+        Thread periodic_window_thread = new Thread(new Runnable() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
-                fps_readout.setpos(Engine.width - fps_readout.getWidth(), fps_readout.getHeight());
-                if (console_active) {
-                    console_input.setText(">" + new String(console_chars));
-                }
-                input_pressed_array.clear();
-                input_pressed_array_keycodes.clear();
-                input_released_array.clear();
-                input_released_array_keycodes.clear();
+            public void run() {
+                while (true) {
+                    fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
+                    fps_readout.setpos(Engine.width - fps_readout.getWidth(), fps_readout.getHeight());
+                    if (console_active) {
+                        console_input.setText(">" + new String(console_chars));
+                    }
+                    input_pressed_array.clear();
+                    input_pressed_array_keycodes.clear();
+                    input_released_array.clear();
+                    input_released_array_keycodes.clear();
 
-                if (console_cursor < 0) {
-                    console_cursor = 0;
-                }
+                    if (console_cursor < 0) {
+                        console_cursor = 0;
+                    }
 
-                if (console_cursor > 143) {
-                    console_cursor = 143;
+                    if (console_cursor > 143) {
+                        console_cursor = 143;
+                    }
+                    if (console_active) {
+                        console_line_3.setpos(5, console_line_3.getHeight());
+                        console_line_2.setpos(5, console_line_3.getpos()[1] + console_line_2.getHeight());
+                        console_line_1.setpos(5, console_line_2.getpos()[1] + console_line_1.getHeight());
+                        console_line_0.setpos(5, console_line_1.getpos()[1] + console_line_0.getHeight());
+                        console_input.setpos(5, console_line_0.getpos()[1] + console_input.getHeight());
+                    }
                 }
-                if (console_active) {
-                    console_line_3.setpos(5, console_line_3.getHeight());
-                    console_line_2.setpos(5, console_line_3.getpos()[1] + console_line_2.getHeight());
-                    console_line_1.setpos(5, console_line_2.getpos()[1] + console_line_1.getHeight());
-                    console_line_0.setpos(5, console_line_1.getpos()[1] + console_line_0.getHeight());
-                    console_input.setpos(5, console_line_0.getpos()[1] + console_input.getHeight());
-                }
-
-
             }
-        };
+        });
 
-        Timer periodic_window_action_timer = new Timer(window_action_delay, periodic_window_actions);
-        periodic_window_action_timer.start();
+        periodic_window_thread.start();
+
+      //  Timer periodic_window_action_timer = new Timer(window_action_delay, periodic_window_actions);
+      //  periodic_window_action_timer.start();
 
     }
 
@@ -269,8 +312,8 @@ public class Game_Window extends JPanel {
 
     public void paintComponent(Graphics g) {
         local_g = g;
-        if ( (boolean) WindowHint.windowHint_redraw.value) {
-            g.setColor(((Color) WindowHint.windowHint_clear_color.value));
+        if (redraw) {
+            g.setColor(redrawColor);
             g.fillRect(0, 0, Engine.width, Engine.height);
         }
         Engine.rendStack.draw(g);

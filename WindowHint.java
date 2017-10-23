@@ -21,8 +21,28 @@ public class WindowHint<valueType> {
 
     public static void init() {
         windowHints = new ArrayList<>();
-        windowHint_redraw = new WindowHint<>(Engine.WINDOW_HINT_REDRAW, null, true);
-        windowHint_clear_color = new WindowHint<>(Engine.WINDOW_HINT_CLEAR_COLOR, null, Color.blue);
+        windowHint_redraw = new WindowHint<>(Engine.WINDOW_HINT_REDRAW, new SlythrAction() {
+            @Override
+            public void execute() {
+                Game_Window.redraw = windowHint_redraw.value;
+            }
+
+            @Override
+            public void execute2() {
+
+            }
+        }, true);
+        windowHint_clear_color = new WindowHint<>(Engine.WINDOW_HINT_CLEAR_COLOR, new SlythrAction() {
+            @Override
+            public void execute() {
+                Game_Window.redrawColor = windowHint_clear_color.value;
+            }
+
+            @Override
+            public void execute2() {
+
+            }
+        }, Color.blue);
 
         windowHint_redraw_delay = new WindowHint<>(Engine.WINDOW_HINT_REDRAW_DELAY, new SlythrAction() {
             @Override
@@ -40,8 +60,6 @@ public class WindowHint<valueType> {
     }
 
     public WindowHint(int Tag, SlythrAction onChange, valueType initialValue) {
-
-
         tag = Tag;
         value = initialValue;
         if (onChange == null) {
@@ -65,6 +83,7 @@ public class WindowHint<valueType> {
 
     public void setValue(valueType Value) {
         value = Value;
+        onChangeAction.execute();
     }
 
     private void onChange() {
