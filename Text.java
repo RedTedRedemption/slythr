@@ -154,7 +154,7 @@ public class Text extends Primitive{
 		self_font = font;
 	}
 
-	public void setpos(int X, int Y) {
+	public void setpos(double X, double Y) {
 		origin_x = X;
 		origin_y = Y;
 	}

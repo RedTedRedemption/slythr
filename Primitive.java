@@ -46,8 +46,9 @@ public class Primitive {
 	}
 
 	public void setpos(double x, double y) {
-		System.out.println("setting position from primitive");
-	}
+        Engine.throwFatalError(new SlythrError("ERROR: Attempted to call method setpos() from parent class, could be an error in SLYTHR"));
+
+    }
 
 	public double[] getpos() {
 		return new double[]{ 0, 0 };
@@ -91,7 +92,7 @@ public class Primitive {
 		return physics_velocity;
 	}
 
-	public void move(int x, int y) {
+	public void move(double x, double y) {
 		// moves the object by its physics_velocity
 	}
 
@@ -212,13 +213,8 @@ public class Primitive {
 	}
 
 	public Primitive getBounding_box(){
-		try {
-			throw new SlythrError("attempted to call method getBounding_box() from parent class, could be an error in SLYTHR");
-
-		} catch (SlythrError slythrError) {
-			slythrError.printStackTrace();
-			return new Primitive();
-		}
+	    Engine.throwFatalError(new SlythrError("ERROR: attempted to call method getBounding_box() from parent class, could be an error in SLYTHR"));
+		return null;
 	}
 
 	public void draw_bounding_box(Graphics g){
@@ -251,27 +247,15 @@ public class Primitive {
 	}
 
 	public void setEndpoint_x(int x) {
-		try {
-			throw new SlythrError("attempted to call method setEndpoint_x() from parent class, could be an error in SLYTHR");
-		} catch (SlythrError slythrError) {
-			slythrError.printStackTrace();
-		}
+		Engine.throwFatalError(new SlythrError("attempted to call method setEndpoint_x() from parent class, could be an error in SLYTHR"));
 	}
 
 	public void setEndpoint_y(int y) {
-		try {
-			throw new SlythrError("attempted to call method setEndpoint_y() from parent class, could be an error in SLYTHR");
-		} catch (SlythrError slythrError) {
-			slythrError.printStackTrace();
-		}
+	    Engine.throwFatalError(new SlythrError("attempted to call method setEndpoint_y() from parent class, could be an error in SLYTHR"));
 	}
 
 	public void setEndpoint(int x, int y) {
-		try {
-			throw new SlythrError("attempted to call method setEndpoint() from parent class, could be an error in SLYTHR");
-		} catch (SlythrError slythrError) {
-			slythrError.printStackTrace();
-		}
+	    Engine.throwFatalError(new SlythrError("attempted to call method setEndpoint() from parent class, could be an error in SLYTHR"));
 	}
 
 	public int roundAndCast(double d) {

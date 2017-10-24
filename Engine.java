@@ -35,6 +35,7 @@ public class Engine {
     public static final int WINDOW_HINT_REDRAW = 0;
     public static final int WINDOW_HINT_CLEAR_COLOR = 1;
     public static final int WINDOW_HINT_REDRAW_DELAY = 2;
+    public static final int WINDOW_HINT_PERIODIC_DELAY = 3;
 
     public static boolean drawfps = false;
     public static ArrayList<Game_Window> game_windows;

@@ -148,7 +148,7 @@ public class Rect extends Primitive {
 	 * @param x
 	 * @param y
 	 */
-	public void setpos(int x, int y) {
+	public void setpos(double x, double y) {
 		origin_x = x;
 		origin_y = y;
 	}
@@ -158,7 +158,7 @@ public class Rect extends Primitive {
 	 * @param x Velocity along the x axis
 	 * @param y Velocity along the y axis
 	 */
-	public void move(int x, int y) {
+	public void move(double x, double y) {
 		origin_x = origin_x + x;
 		origin_y = origin_y + y;
 	}
@@ -170,6 +170,8 @@ public class Rect extends Primitive {
 	public void move(double time){
 		setpos(getpos()[0] + (physics_velocity_x * time), getpos()[1] + (physics_velocity_y * time));
 	}
+
+
 
 	/**
 	 * Get the object's position

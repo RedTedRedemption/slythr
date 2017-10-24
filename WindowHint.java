@@ -15,12 +15,16 @@ public class WindowHint<valueType> {
     private SlythrAction onChangeAction;
 
     //window hints
-    static WindowHint<Boolean> windowHint_redraw;
-    static WindowHint<Color> windowHint_clear_color;
-    static WindowHint<Integer> windowHint_redraw_delay;
+    public static WindowHint<Boolean> windowHint_redraw;
+    public static WindowHint<Color> windowHint_clear_color;
+    public static WindowHint<Integer> windowHint_redraw_delay;
+    public static WindowHint<Integer> windowHint_periodic_delay;
 
     public static void init() {
         windowHints = new ArrayList<>();
+
+        windowHint_periodic_delay = new WindowHint<>(Engine.WINDOW_HINT_PERIODIC_DELAY, null, 12);
+
         windowHint_redraw = new WindowHint<>(Engine.WINDOW_HINT_REDRAW, new SlythrAction() {
             @Override
             public void execute() {
@@ -87,7 +91,11 @@ public class WindowHint<valueType> {
     }
 
     private void onChange() {
-        onChangeAction.execute();
+        if (onChangeAction != null) {
+            onChangeAction.execute();
+        } else {
+            //pass;
+        }
     }
 
     public valueType getValue() {

@@ -206,6 +206,7 @@ public class Game_Window extends JPanel {
                 if ( (boolean) WindowHint.windowHint_redraw.value) {
                     repaint();
                 }
+
             }
         };
 
@@ -214,7 +215,6 @@ public class Game_Window extends JPanel {
             public boolean trigger() {
                 return input_pressed_array.contains("`");
             }
-
             @Override
             public void action() {
                 console_active = !console_active;
@@ -224,6 +224,7 @@ public class Game_Window extends JPanel {
                     console_primitives.disable();
                 }
             }
+
         });
 
 
@@ -237,74 +238,39 @@ public class Game_Window extends JPanel {
 //        }).start();
 
 //
-//        ActionListener periodic_window_actions = new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
-//                fps_readout.setpos(Engine.width - fps_readout.getWidth(), fps_readout.getHeight());
-//                if (console_active) {
-//                    console_input.setText(">" + new String(console_chars));
-//                }
-//                input_pressed_array.clear();
-//                input_pressed_array_keycodes.clear();
-//                input_released_array.clear();
-//                input_released_array_keycodes.clear();
-//
-//                if (console_cursor < 0) {
-//                    console_cursor = 0;
-//                }
-//
-//                if (console_cursor > 143) {
-//                    console_cursor = 143;
-//                }
-//                if (console_active) {
-//                    console_line_3.setpos(5, console_line_3.getHeight());
-//                    console_line_2.setpos(5, console_line_3.getpos()[1] + console_line_2.getHeight());
-//                    console_line_1.setpos(5, console_line_2.getpos()[1] + console_line_1.getHeight());
-//                    console_line_0.setpos(5, console_line_1.getpos()[1] + console_line_0.getHeight());
-//                    console_input.setpos(5, console_line_0.getpos()[1] + console_input.getHeight());
-//                }
-//
-//
-//            }
-//        };
-
-        Thread periodic_window_thread = new Thread(new Runnable() {
+        ActionListener periodic_window_actions = new ActionListener() {
             @Override
-            public void run() {
-                while (true) {
-                    fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
-                    fps_readout.setpos(Engine.width - fps_readout.getWidth(), fps_readout.getHeight());
-                    if (console_active) {
-                        console_input.setText(">" + new String(console_chars));
-                    }
-                    input_pressed_array.clear();
-                    input_pressed_array_keycodes.clear();
-                    input_released_array.clear();
-                    input_released_array_keycodes.clear();
-
-                    if (console_cursor < 0) {
-                        console_cursor = 0;
-                    }
-
-                    if (console_cursor > 143) {
-                        console_cursor = 143;
-                    }
-                    if (console_active) {
-                        console_line_3.setpos(5, console_line_3.getHeight());
-                        console_line_2.setpos(5, console_line_3.getpos()[1] + console_line_2.getHeight());
-                        console_line_1.setpos(5, console_line_2.getpos()[1] + console_line_1.getHeight());
-                        console_line_0.setpos(5, console_line_1.getpos()[1] + console_line_0.getHeight());
-                        console_input.setpos(5, console_line_0.getpos()[1] + console_input.getHeight());
-                    }
+            public void actionPerformed(ActionEvent e) {
+                fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
+                fps_readout.setpos((double) Engine.width - fps_readout.getWidth(), (double) fps_readout.getHeight());
+                if (console_active) {
+                    console_input.setText(">" + new String(console_chars));
                 }
+                input_pressed_array.clear();
+                input_pressed_array_keycodes.clear();
+                input_released_array.clear();
+                input_released_array_keycodes.clear();
+
+                if (console_cursor < 0) {
+                    console_cursor = 0;
+                }
+
+                if (console_cursor > 143) {
+                    console_cursor = 143;
+                }
+                if (console_active) {
+                    console_line_3.setpos(5.0, console_line_3.getHeight());
+                    console_line_2.setpos(5.0, console_line_3.getpos()[1] + console_line_2.getHeight());
+                    console_line_1.setpos(5.0, console_line_2.getpos()[1] + console_line_1.getHeight());
+                    console_line_0.setpos(5.0, console_line_1.getpos()[1] + console_line_0.getHeight());
+                    console_input.setpos(5.0, console_line_0.getpos()[1] + console_input.getHeight());
+                }
+
             }
-        });
+        };
 
-        periodic_window_thread.start();
-
-      //  Timer periodic_window_action_timer = new Timer(window_action_delay, periodic_window_actions);
-      //  periodic_window_action_timer.start();
+        Timer periodic_window_action_timer = new Timer(((int) Engine.getWindow_hint(Engine.WINDOW_HINT_PERIODIC_DELAY)), periodic_window_actions);
+        periodic_window_action_timer.start();
 
     }
 
@@ -347,7 +313,7 @@ public class Game_Window extends JPanel {
         }
     }
 
-    public void drawPoint(int x, int y, Color color) {
+    public void drawPoint(double x, double y, Color color) {
         Rect newrect = new Rect(false);
         newrect.setpos(x, y);
         newrect.setHeight(1);

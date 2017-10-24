@@ -1,7 +1,6 @@
 package slythr;
 
 import java.awt.*;
-import java.time.Instant;
 
 /**
  * Class for simulation of various physics related functions such as gravity (not implemented yet) and object collision
@@ -115,7 +114,7 @@ public class Physics {
 
 	public static void simulate(int time, Graphics g){
 		//simfrom = 1 + Instant.now().get(ChronoField.INSTANT_SECONDS);
-		physstart = Instant.now().getNano();
+		//physstart = Instant.now().getNano();
 		for (Primitive obj : Engine.rendStack.makeArrayList()){
 			obj.move(time);
 
