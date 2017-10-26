@@ -183,32 +183,24 @@ public class Game_Window extends JPanel {
             }
         });
 
-        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released A"), aReleased);
-        rootPane.getActionMap().put("aReleased", aReleased);
-
-
-
-
-
-
-
-
-        ActionListener repainter = new ActionListener() {
+        addMouseMotionListener(new MouseMotionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                for (Primitive text : update_set.makeArrayList()){
-                    try {
-                        text.update(local_g);
-                    } catch (java.lang.NullPointerException ex){
-                        //pass;
-                    }
-                }
-                if ( (boolean) WindowHint.windowHint_redraw.value) {
-                    repaint();
-                }
+            public void mouseDragged(MouseEvent e) {
 
             }
-        };
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+
+            }
+        });
+
+   //     rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released A"), aReleased);
+     //   rootPane.getActionMap().put("aReleased", aReleased);
+
+
+
+
 
         Engine.addEvent(new SlythrEvent() {
             @Override
@@ -227,56 +219,178 @@ public class Game_Window extends JPanel {
 
         });
 
+        int repaintDelay = (int) Engine.getWindow_hint(Engine.WINDOW_HINT_REDRAW_DELAY);
 
-        repaint_timer = new Timer(((int) Engine.getWindow_hint(Engine.WINDOW_HINT_REDRAW_DELAY)), repainter);
-        repaint_timer.start();
-//        new Thread(new Runnable() {
+//        Timer repaintTimer = new Timer(repaintDelay, new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                for (Primitive text : update_set.makeArrayList()) {
+//                    try {
+//                        text.update(local_g);
+//                    } catch (java.lang.NullPointerException ex) {
+//                        //pass;
+//                    }
+//                }
+//                if ((boolean) WindowHint.windowHint_redraw.value) {
+//                    repaint();
+//                }
+//            }
+//        });
+
+       // repaintTimer.start();
+
+
+
+//        Thread repainterThread = new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-//                repaint_timer.start();
+//                while (true) {
+//                    try {
+//                        for (Primitive text : update_set.makeArrayList()) {
+//                            try {
+//                                text.update(local_g);
+//                            } catch (java.lang.NullPointerException ex) {
+//                                //pass;
+//                            }
+//                        }
+//                        if ((boolean) WindowHint.windowHint_redraw.value) {
+//                            repaint();
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    try {
+//                        Thread.sleep(repaintDelay);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
 //            }
-//        }).start();
-
+//        }, "repainter thread");
 //
-        ActionListener periodic_window_actions = new ActionListener() {
+//        repainterThread.start();
+
+
+        Thread physicsThread = new Thread(new Runnable() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
-                fps_readout.setpos((double) Engine.width - fps_readout.getWidth(), (double) fps_readout.getHeight());
-                if (console_active) {
-                    console_input.setText(">" + new String(console_chars));
-                }
-                input_pressed_array.clear();
-                input_pressed_array_keycodes.clear();
-                input_released_array.clear();
-                input_released_array_keycodes.clear();
-
-                if (console_cursor < 0) {
-                    console_cursor = 0;
-                }
-
-                if (console_cursor > 143) {
-                    console_cursor = 143;
-                }
-                if (console_active) {
-                    console_line_3.setpos(5.0, console_line_3.getHeight());
-                    console_line_2.setpos(5.0, console_line_3.getpos()[1] + console_line_2.getHeight());
-                    console_line_1.setpos(5.0, console_line_2.getpos()[1] + console_line_1.getHeight());
-                    console_line_0.setpos(5.0, console_line_1.getpos()[1] + console_line_0.getHeight());
-                    console_input.setpos(5.0, console_line_0.getpos()[1] + console_input.getHeight());
+            public void run() {
+                while (true) {
+                    try {
+                        Physics.simulate(timescale, getGraphics());
+                    } catch (java.lang.NullPointerException e) {
+                        //pass;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        Thread.sleep(repaintDelay);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
+        }, "Physics thread");
+
+  //      physicsThread.start();
+
+        SwingWorker physicsWorker = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                while (!isCancelled()) {
+                    try {
+                        Physics.simulate(timescale, getGraphics());
+                    } catch (java.lang.NullPointerException e) {
+                        //pass;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        Thread.sleep(repaintDelay);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
         };
 
-        Timer periodic_window_action_timer = new Timer(((int) Engine.getWindow_hint(Engine.WINDOW_HINT_PERIODIC_DELAY)), periodic_window_actions);
-        periodic_window_action_timer.start();
+        physicsWorker.execute();
+
+        SwingWorker renderWorker = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                while (!isCancelled()) {
+                    for (Primitive text : update_set.makeArrayList()) {
+                        try {
+                            text.update(local_g);
+                        } catch (java.lang.NullPointerException ex) {
+                            //pass;
+                        }
+                    }
+                    if ((boolean) WindowHint.windowHint_redraw.value) {
+                        repaint();
+                    }
+                    Thread.sleep(repaintDelay);
+                }
+                return null;
+            }
+        };
+
+        renderWorker.execute();
+
+        int periodicDelay = (int) Engine.getWindow_hint(Engine.WINDOW_HINT_PERIODIC_DELAY);
+
+
+        Thread periodicWindowThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
+                        fps_readout.setpos((double) Engine.width - fps_readout.getWidth(), (double) fps_readout.getHeight());
+                        if (console_active) {
+                            console_input.setText(">" + new String(console_chars));
+                        }
+                        input_pressed_array.clear();
+                        input_pressed_array_keycodes.clear();
+                        input_released_array.clear();
+                        input_released_array_keycodes.clear();
+
+                        if (console_cursor < 0) {
+                            console_cursor = 0;
+                        }
+
+                        if (console_cursor > 143) {
+                            console_cursor = 143;
+                        }
+                        if (console_active) {
+                            console_line_3.setpos(5.0, console_line_3.getHeight());
+                            console_line_2.setpos(5.0, console_line_3.getpos()[1] + console_line_2.getHeight());
+                            console_line_1.setpos(5.0, console_line_2.getpos()[1] + console_line_1.getHeight());
+                            console_line_0.setpos(5.0, console_line_1.getpos()[1] + console_line_0.getHeight());
+                            console_input.setpos(5.0, console_line_0.getpos()[1] + console_input.getHeight());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        Thread.sleep(periodicDelay);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, "periodic thread");
+
+        periodicWindowThread.start();
 
     }
 
 
 
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         local_g = g;
         if (redraw) {
             g.setColor(redrawColor);
@@ -286,8 +400,9 @@ public class Game_Window extends JPanel {
         point_buffer.draw(g);
         point_buffer.flush();
         Engine.fps_count = Engine.fps_count + 1;
-        Physics.simulate(timescale, g);
+
     }
+
 
     public void add_game_loop(Game_loop game_loop){
 

@@ -226,7 +226,7 @@ public class Engine {
                     }
                 }
             }
-        });
+        }, "SLYTHR Game Loop");
         game_loop_thread.start();
 
     }
@@ -321,7 +321,7 @@ public class Engine {
                 }
                 task.action();
             }
-        }).start();
+        }, "SLYTHR task thread").start();
     }
 
     /**
@@ -329,23 +329,35 @@ public class Engine {
      *
      * @param subRoutine the subroutine
      */
+
     public static void addSubRoutine(SubRoutine subRoutine){
-        new Timer(12, new ActionListener() {
+        new Thread(new Runnable() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                subRoutine.routine();
+            public void run() {
+                while (true) {
+                    try {
+                        subRoutine.routine();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        Thread.sleep(12);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }).start();
+        }, "SLYTHR subroutine").start();
     }
 
-    public static void addSubRoutine(int delay, SubRoutine subRoutine){
-        new Timer(delay, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                subRoutine.routine();
-            }
-        }).start();
-    }
+//    public static void addSubRoutine(int delay, SubRoutine subRoutine){
+//        new Timer(delay, new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                subRoutine.routine();
+//            }
+//        }).start();
+//    }
 
     /**
      * Create a new thread and run the action given.
