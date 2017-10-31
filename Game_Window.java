@@ -36,6 +36,11 @@ public class Game_Window extends JPanel {
     public Stack point_buffer = new Stack();
     public static Color redrawColor = Color.blue;
     public static boolean redraw = (boolean) WindowHint.windowHint_redraw.value;
+    private static Color brushColor = new Color(255, 255, 255);
+    private static ArrayList<Vertex_Array> vertexBuffers = new ArrayList();
+    public static final int DRAW_POINT = 0;
+    public static final int DRAW_LINE = 1;
+    private int cursorFar;
 
 
     public void addNotify() {
@@ -65,12 +70,11 @@ public class Game_Window extends JPanel {
         }
 
 
-
         fps_readout = new Text("FPS:", 24, this);
         update_set.add(fps_readout);
         fps_readout.disable();
         fps_readout.move_to_top();
-        do{
+        do {
             rootPane = frame.getRootPane();
         } while (rootPane == null);
 
@@ -93,16 +97,15 @@ public class Game_Window extends JPanel {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                input_array.add(new String(new char[] {e.getKeyChar()}).toLowerCase());
+                input_array.add(new String(new char[]{e.getKeyChar()}).toLowerCase());
                 input_array_keycodes.add(e.getKeyCode());
-                input_pressed_array.add(new String(new char[] {e.getKeyChar()}).toLowerCase());
+                input_pressed_array.add(new String(new char[]{e.getKeyChar()}).toLowerCase());
                 input_pressed_array_keycodes.add(e.getKeyCode());
-                if (console_active && !new String(new char[] {e.getKeyChar()}).equals("`")) {
+                if (console_active && !new String(new char[]{e.getKeyChar()}).equals("`")) {
                     console_chars[console_cursor] = e.getKeyChar();
                     console_cursor = console_cursor + 1;
 
                 }
-
 
 
                 if (console_active && e.getKeyCode() == 8) {
@@ -124,8 +127,8 @@ public class Game_Window extends JPanel {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                input_array.remove(new String(new char[] {e.getKeyChar()}).toLowerCase());
-                input_released_array.add(new String(new char[] {e.getKeyChar()}).toLowerCase());
+                input_array.remove(new String(new char[]{e.getKeyChar()}).toLowerCase());
+                input_released_array.add(new String(new char[]{e.getKeyChar()}).toLowerCase());
                 input_released_array_keycodes.add(e.getKeyCode());
             }
         });
@@ -195,11 +198,8 @@ public class Game_Window extends JPanel {
             }
         });
 
-   //     rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released A"), aReleased);
-     //   rootPane.getActionMap().put("aReleased", aReleased);
-
-
-
+        //     rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released A"), aReleased);
+        //   rootPane.getActionMap().put("aReleased", aReleased);
 
 
         Engine.addEvent(new SlythrEvent() {
@@ -207,6 +207,7 @@ public class Game_Window extends JPanel {
             public boolean trigger() {
                 return input_pressed_array.contains("`");
             }
+
             @Override
             public void action() {
                 console_active = !console_active;
@@ -220,56 +221,6 @@ public class Game_Window extends JPanel {
         });
 
         int repaintDelay = (int) Engine.getWindow_hint(Engine.WINDOW_HINT_REDRAW_DELAY);
-
-//        Timer repaintTimer = new Timer(repaintDelay, new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                for (Primitive text : update_set.makeArrayList()) {
-//                    try {
-//                        text.update(local_g);
-//                    } catch (java.lang.NullPointerException ex) {
-//                        //pass;
-//                    }
-//                }
-//                if ((boolean) WindowHint.windowHint_redraw.value) {
-//                    repaint();
-//                }
-//            }
-//        });
-
-       // repaintTimer.start();
-
-
-
-//        Thread repainterThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                while (true) {
-//                    try {
-//                        for (Primitive text : update_set.makeArrayList()) {
-//                            try {
-//                                text.update(local_g);
-//                            } catch (java.lang.NullPointerException ex) {
-//                                //pass;
-//                            }
-//                        }
-//                        if ((boolean) WindowHint.windowHint_redraw.value) {
-//                            repaint();
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    try {
-//                        Thread.sleep(repaintDelay);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }, "repainter thread");
-//
-//        repainterThread.start();
-
 
         Thread physicsThread = new Thread(new Runnable() {
             @Override
@@ -292,7 +243,7 @@ public class Game_Window extends JPanel {
             }
         }, "Physics thread");
 
-  //      physicsThread.start();
+              physicsThread.start();
 
         SwingWorker physicsWorker = new SwingWorker() {
             @Override
@@ -315,7 +266,7 @@ public class Game_Window extends JPanel {
             }
         };
 
-        physicsWorker.execute();
+       // physicsWorker.execute();
 
         SwingWorker renderWorker = new SwingWorker() {
             @Override
@@ -323,7 +274,7 @@ public class Game_Window extends JPanel {
                 while (!isCancelled()) {
                     for (Primitive text : update_set.makeArrayList()) {
                         try {
-                            text.update(local_g);
+                            text.update(getGraphics());
                         } catch (java.lang.NullPointerException ex) {
                             //pass;
                         }
@@ -341,49 +292,38 @@ public class Game_Window extends JPanel {
 
         int periodicDelay = (int) Engine.getWindow_hint(Engine.WINDOW_HINT_PERIODIC_DELAY);
 
-
-        Thread periodicWindowThread = new Thread(new Runnable() {
+        Timer periodicTimer = new Timer(periodicDelay, new ActionListener() {
             @Override
-            public void run() {
-                while (true) {
-                    try {
-                        fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
-                        fps_readout.setpos((double) Engine.width - fps_readout.getWidth(), (double) fps_readout.getHeight());
-                        if (console_active) {
-                            console_input.setText(">" + new String(console_chars));
-                        }
-                        input_pressed_array.clear();
-                        input_pressed_array_keycodes.clear();
-                        input_released_array.clear();
-                        input_released_array_keycodes.clear();
-
-                        if (console_cursor < 0) {
-                            console_cursor = 0;
-                        }
-
-                        if (console_cursor > 143) {
-                            console_cursor = 143;
-                        }
-                        if (console_active) {
-                            console_line_3.setpos(5.0, console_line_3.getHeight());
-                            console_line_2.setpos(5.0, console_line_3.getpos()[1] + console_line_2.getHeight());
-                            console_line_1.setpos(5.0, console_line_2.getpos()[1] + console_line_1.getHeight());
-                            console_line_0.setpos(5.0, console_line_1.getpos()[1] + console_line_0.getHeight());
-                            console_input.setpos(5.0, console_line_0.getpos()[1] + console_input.getHeight());
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        Thread.sleep(periodicDelay);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            public void actionPerformed(ActionEvent e) {
+                fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
+                fps_readout.setpos((double) Engine.width - fps_readout.getWidth(), (double) fps_readout.getHeight());
+                if (console_active) {
+                    console_input.setText(">" + new String(console_chars));
                 }
-            }
-        }, "periodic thread");
+                input_pressed_array.clear();
+                input_pressed_array_keycodes.clear();
+                input_released_array.clear();
+                input_released_array_keycodes.clear();
 
-        periodicWindowThread.start();
+                if (console_cursor < 0) {
+                    console_cursor = 0;
+                }
+
+                if (console_cursor > 143) {
+                    console_cursor = 143;
+                }
+                if (console_active) {
+                    console_line_3.setpos(5.0, console_line_3.getHeight());
+                    console_line_2.setpos(5.0, console_line_3.getpos()[1] + console_line_2.getHeight());
+                    console_line_1.setpos(5.0, console_line_2.getpos()[1] + console_line_1.getHeight());
+                    console_line_0.setpos(5.0, console_line_1.getpos()[1] + console_line_0.getHeight());
+                    console_input.setpos(5.0, console_line_0.getpos()[1] + console_input.getHeight());
+                }
+                repaint();
+            }
+        });
+
+        periodicTimer.start();
 
     }
 
@@ -392,14 +332,31 @@ public class Game_Window extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         local_g = g;
+        Graphics2D g2d = (Graphics2D) g.create();
         if (redraw) {
-            g.setColor(redrawColor);
-            g.fillRect(0, 0, Engine.width, Engine.height);
+            g2d.setColor(redrawColor);
+            g2d.fillRect(0, 0, Engine.width, Engine.height);
         }
-        Engine.rendStack.draw(g);
-        point_buffer.draw(g);
+        for (Vertex_Array vertexBuffer : vertexBuffers) {
+            if (vertexBuffer.drawAction == DRAW_POINT) {
+                for (int cursor = 0; cursor < vertexBuffer.vertexArray.length - (1 + vertexBuffer.stride); cursor = cursor + vertexBuffer.stride) {
+                    g2d.setColor(new Color(vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 2], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 1], vertexBuffer.vertexArray[cursor + vertexBuffer.stride]));
+                    g2d.drawRect(vertexBuffer.vertexArray[cursor], vertexBuffer.vertexArray[cursor + 1], 1, 1);
+                }
+            }
+            if (vertexBuffer.drawAction == DRAW_LINE) {
+                for (int cursor = 0; cursor < vertexBuffer.vertexArray.length - (1 + vertexBuffer.stride); cursor = cursor + vertexBuffer.stride) {
+                    g2d.setColor(new Color(vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 3], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 2], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 1]));
+                    g2d.drawLine(vertexBuffer.vertexArray[cursor], vertexBuffer.vertexArray[cursor + 1], vertexBuffer.vertexArray[cursor + 2], vertexBuffer.vertexArray[cursor + 3]);
+
+                }
+            }
+        }
+        Engine.rendStack.draw(g2d);
+        point_buffer.draw(g2d);
         point_buffer.flush();
         Engine.fps_count = Engine.fps_count + 1;
+        g2d.dispose();
 
     }
 
@@ -435,5 +392,10 @@ public class Game_Window extends JPanel {
         newrect.setWidth(1);
         newrect.setColor(color);
         point_buffer.add(newrect);
+    }
+
+    public static void bindVertexArray(int drawAction, int stride, int[] array) {
+        vertexBuffers.add(new Vertex_Array(drawAction, stride, array));
+
     }
 }
