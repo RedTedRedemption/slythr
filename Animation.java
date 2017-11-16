@@ -1,7 +1,5 @@
 package slythr;
 
-import com.sun.istack.internal.Nullable;
-
 import java.util.ArrayList;
 
 /**
@@ -47,7 +45,7 @@ public class Animation {
      * @param Mode What the animation should do to the object.
      * @param point_array
      */
-    public Animation(@Nullable Primitive Target, int Mode, ArrayList<int[]> point_array){
+    public Animation(Primitive Target, int Mode, ArrayList<int[]> point_array){
         for (int[] a : point_array){
             bread.add(a);
         }
@@ -61,7 +59,7 @@ public class Animation {
      * @param Target
      * @param Mode
      */
-    public Animation(@Nullable Primitive Target, int Mode){
+    public Animation(Primitive Target, int Mode){
         target = Target;
         mode = Mode;
         Engine.animation_buffer.add(this);
