@@ -37,9 +37,10 @@ public class Game_Window extends JPanel {
     public static Color redrawColor = Color.blue;
     public static boolean redraw = (boolean) WindowHint.windowHint_redraw.value;
     private static Color brushColor = new Color(255, 255, 255);
-    private static ArrayList<Vertex_Array> vertexBuffers = new ArrayList();
+    public static ArrayList<Vertex_Array> vertexBuffers = new ArrayList();
     public static final int DRAW_POINT = 0;
     public static final int DRAW_LINE = 1;
+    public static final int FILL_RECT = 2;
     private int cursorFar;
 
 
@@ -337,21 +338,23 @@ public class Game_Window extends JPanel {
             g2d.setColor(redrawColor);
             g2d.fillRect(0, 0, Engine.width, Engine.height);
         }
-        for (Vertex_Array vertexBuffer : vertexBuffers) {
-            if (vertexBuffer.drawAction == DRAW_POINT) {
-                for (int cursor = 0; cursor < vertexBuffer.vertexArray.length - (1 + vertexBuffer.stride); cursor = cursor + vertexBuffer.stride) {
-                    g2d.setColor(new Color(vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 2], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 1], vertexBuffer.vertexArray[cursor + vertexBuffer.stride]));
-                    g2d.drawRect(vertexBuffer.vertexArray[cursor], vertexBuffer.vertexArray[cursor + 1], 1, 1);
-                }
-            }
-            if (vertexBuffer.drawAction == DRAW_LINE) {
-                for (int cursor = 0; cursor < vertexBuffer.vertexArray.length - (1 + vertexBuffer.stride); cursor = cursor + vertexBuffer.stride) {
-                    g2d.setColor(new Color(vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 3], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 2], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 1]));
-                    g2d.drawLine(vertexBuffer.vertexArray[cursor], vertexBuffer.vertexArray[cursor + 1], vertexBuffer.vertexArray[cursor + 2], vertexBuffer.vertexArray[cursor + 3]);
 
-                }
-            }
-        }
+        g2d.drawImage(Render.GLRenderSurface, 0, 0, null);
+//        for (Vertex_Array vertexBuffer : vertexBuffers) {
+//            if (vertexBuffer.drawAction == DRAW_POINT) {
+//                for (int cursor = 0; cursor < vertexBuffer.vertexArray.length - (1 + vertexBuffer.stride); cursor = cursor + vertexBuffer.stride) {
+//                    g2d.setColor(new Color(vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 2], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 1], vertexBuffer.vertexArray[cursor + vertexBuffer.stride]));
+//                    g2d.drawRect(vertexBuffer.vertexArray[cursor], vertexBuffer.vertexArray[cursor + 1], 1, 1);
+//                }
+//            }
+//            if (vertexBuffer.drawAction == DRAW_LINE) {
+//                for (int cursor = 0; cursor < vertexBuffer.vertexArray.length - (1 + vertexBuffer.stride); cursor = cursor + vertexBuffer.stride) {
+//                    g2d.setColor(new Color(vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 3], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 2], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 1]));
+//                    g2d.drawLine(vertexBuffer.vertexArray[cursor], vertexBuffer.vertexArray[cursor + 1], vertexBuffer.vertexArray[cursor + 2], vertexBuffer.vertexArray[cursor + 3]);
+//
+//                }
+//            }
+//        }
         Engine.rendStack.draw(g2d);
         point_buffer.draw(g2d);
         point_buffer.flush();

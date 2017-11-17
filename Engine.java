@@ -14,6 +14,8 @@ public class Engine {
 
     public static int height;
 
+    public static int[] offset = {0, 20};
+
     public static int width;
 
     public static JFrame frame = new JFrame("Slythr Game");
@@ -44,6 +46,8 @@ public class Engine {
     public static String[] previous_commands = {"", "", "", ""};
     public static Animation_Buffer animation_buffer;
 
+    private static Thread gl_renderThread;
+
 
     /**
      * Initialize the engine and create a window.
@@ -65,6 +69,7 @@ public class Engine {
         consoleCommands = new ArrayList<>();
         animation_buffer = new Animation_Buffer();
         rendStack = new Stack();
+
 
         width = Width;
         height = Height;
@@ -111,6 +116,26 @@ public class Engine {
         });
 
         splashStatus("creating threads");
+
+        gl_renderThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    for (Vertex_Array vertex_array : Game_Window.vertexBuffers) {
+                        try {
+                            Render.render(vertex_array);
+                        } catch (Exception e) {
+                            //pass;
+                        }
+                    }
+                    try {
+                        Thread.sleep(WindowHint.windowHint_redraw_delay.getValue());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
         Thread fps_thread = new Thread(new Runnable() {
             @Override
@@ -188,6 +213,15 @@ public class Engine {
             //wait for the splash to end and all initial setup to be complete - requires game-side method joinSplash() to be run
         }
         frame.setVisible(true);
+        gl_renderThread.start();
+//        offset[0] = width - frame.getContentPane().getSize().width - 5;
+//        System.out.println(offset[0]);
+//        offset[1] = height - frame.getContentPane().getSize().height - 10;
+//        System.out.println(offset[1]);
+//        frame.getContentPane().setSize(height, width);
+//        frame.setSize(width + offset[0] + 5, height + offset[1] + 10);
+//        System.out.println(frame.getContentPane().getSize());
+//        System.out.println(frame.getSize());
 
 
 

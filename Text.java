@@ -142,7 +142,7 @@ public class Text extends Primitive{
 		if (enabled) {
 			g.setColor(self_color);
 			g.setFont(self_font.getFont(self_size));
-			g.drawString(self_content, roundAndCast(origin_x), roundAndCast(origin_y));
+			g.drawString(self_content, roundAndCast(origin_x) + Engine.offset[0], roundAndCast(origin_y) + Engine.offset[1]);
 		}
 	}
 
