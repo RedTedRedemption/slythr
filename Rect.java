@@ -25,6 +25,9 @@ public class Rect extends Primitive {
 	public boolean sprite = false;
 	public int sprite_step;
 	public String label = "a rect object";
+	private boolean GLEnabled = true;
+
+	public Vertex_Array vertex_array;
 
 
 	/**
@@ -32,10 +35,11 @@ public class Rect extends Primitive {
 	 */
 	public Rect() {
 		Engine.rendStack.add(this);
+        vertex_array = Game_Window.bindVertexArray(Render.FILL_RECT, 7, makeVertexData());
 	}
 
-	public Rect(boolean dontAdd) {
-
+	public Rect(boolean GLDisabled) {
+        Engine.rendStack.add(this);
 	}
 
 
@@ -79,13 +83,17 @@ public class Rect extends Primitive {
 	 * Draws the rectangle. Should rarely be called directly. In most cases this method will be called by a {@link Stack Stack}.
 	 * @param g Graphics instance on which the rect will be drawn.
 	 */
-	synchronized public void draw(Graphics g) {
+	public void draw(Graphics g) {
 
-		// System.out.println("drawing from rect");
-		if (enabled) {
+        if (!enabled) {
+            return;
+        }
+        if (!GLEnabled) {
 			g.setColor(new Color(color_r, color_g, color_b));
 			g.fillRect(roundAndCast(origin_x), roundAndCast(origin_y), roundAndCast(width), roundAndCast(height));
-		}
+		} else {
+            vertex_array.setData(makeVertexData());
+        }
 	}
 
 	/**
@@ -309,6 +317,10 @@ public class Rect extends Primitive {
 		physics_velocity_y = physics_velocity_y + y;
 		physics_velocity_x = physics_velocity_x + x;
 	}
+
+	private int[] makeVertexData() {
+	    return new int[] {roundAndCast(origin_x), roundAndCast(origin_y), roundAndCast(height), roundAndCast(width), color_r, color_g, color_b};
+    }
 
 
 }

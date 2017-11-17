@@ -14,4 +14,8 @@ public class Vertex_Array {
         vertexArray = array;
     }
 
+    public void setData(int[] dataArray) {
+        vertexArray = dataArray;
+    }
+
 }

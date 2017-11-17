@@ -38,9 +38,7 @@ public class Game_Window extends JPanel {
     public static boolean redraw = (boolean) WindowHint.windowHint_redraw.value;
     private static Color brushColor = new Color(255, 255, 255);
     public static ArrayList<Vertex_Array> vertexBuffers = new ArrayList();
-    public static final int DRAW_POINT = 0;
-    public static final int DRAW_LINE = 1;
-    public static final int FILL_RECT = 2;
+
     private int cursorFar;
 
 
@@ -338,7 +336,7 @@ public class Game_Window extends JPanel {
             g2d.setColor(redrawColor);
             g2d.fillRect(0, 0, Engine.width, Engine.height);
         }
-
+        Engine.rendStack.draw(g2d);
         g2d.drawImage(Render.GLRenderSurface, 0, 0, null);
 //        for (Vertex_Array vertexBuffer : vertexBuffers) {
 //            if (vertexBuffer.drawAction == DRAW_POINT) {
@@ -355,9 +353,7 @@ public class Game_Window extends JPanel {
 //                }
 //            }
 //        }
-        Engine.rendStack.draw(g2d);
-        point_buffer.draw(g2d);
-        point_buffer.flush();
+       // Engine.rendStack.draw(g2d);
         Engine.fps_count = Engine.fps_count + 1;
         g2d.dispose();
 
@@ -397,8 +393,10 @@ public class Game_Window extends JPanel {
         point_buffer.add(newrect);
     }
 
-    public static void bindVertexArray(int drawAction, int stride, int[] array) {
-        vertexBuffers.add(new Vertex_Array(drawAction, stride, array));
+    public static Vertex_Array bindVertexArray(int drawAction, int stride, int[] array) {
+        Vertex_Array new_vertexArray = new Vertex_Array(drawAction, stride, array);
+        vertexBuffers.add(new_vertexArray);
+        return new_vertexArray;
 
     }
 }

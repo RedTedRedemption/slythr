@@ -121,13 +121,12 @@ public class Engine {
             @Override
             public void run() {
                 while (true) {
-                    for (Vertex_Array vertex_array : Game_Window.vertexBuffers) {
-                        try {
-                            Render.render(vertex_array);
-                        } catch (Exception e) {
-                            //pass;
-                        }
+                    try {
+                        Render.render();
+                    } catch (Exception e) {
+                        //pass;
                     }
+
                     try {
                         Thread.sleep(WindowHint.windowHint_redraw_delay.getValue());
                     } catch (InterruptedException e) {

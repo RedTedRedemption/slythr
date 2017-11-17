@@ -43,7 +43,7 @@ public class Text extends Primitive{
 		self_font = new SFont(Font.ITALIC, "Serif");
 		self_content = content;
 		self_size = size;
-		bounding_box = new Rect();
+		bounding_box = new Rect(false);
 		bounding_box.disable();
 		bounding_box.setAttributes(this.getpos()[0], this.getpos()[1],20, 20, 0,0,0);
 		bounding_box.setpos(origin_x, origin_y);
