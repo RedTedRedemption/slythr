@@ -14,8 +14,8 @@ public class SplashThread implements Runnable {
     }
 
     public void run(){
-        System.out.println("showing splash...");
-        splash = new slythr.SplashScreen(3000);
+        //System.out.println("showing splash...");
+        splash = new SplashScreen(3000);
         splash.showSplash();
         System.out.println("splash done");
     }

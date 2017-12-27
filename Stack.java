@@ -109,7 +109,8 @@ public class Stack {
 	    try {
             stack.remove(stack.indexOf(obj));
         } catch (ArrayIndexOutOfBoundsException e) {
-	        System.out.println("Failed to remove item from stack: java.lang.ArrayIndexOutOfBoundsException << error handled sucessfully");
+	    	e.printStackTrace();
+	        //System.out.println("Failed to remove item from stack: java.lang.ArrayIndexOutOfBoundsException << error handled sucessfully");
         }
 
         //handles a rarely-ocurring error involving out of bounds exceptions when trying to kill an object -- may result from frame

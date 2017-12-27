@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * Created by teddy on 4/21/17.
  *
- * Complexes are sets of {@link slythr.Primitive Primitives} that are grouped together. This class has not been finished yet.
+ * Complexes are sets of {@link Primitive Primitives} that are grouped together. This class has not been finished yet.
  */
 
 

@@ -1,5 +1,6 @@
 package slythr;
 
+
 import java.awt.*;
 
 /**
@@ -14,8 +15,10 @@ public class Rect extends Primitive {
 	public int color_b = 255;
 	double center_x;
 	double center_y;
+	double center_z;
 	public double origin_x = 0;
 	public double origin_y = 0;
+	public double origin_z = 0;
 	public double height = 20;
 	public double width = 20;
 	public double physics_velocity_x = 0;
@@ -27,6 +30,7 @@ public class Rect extends Primitive {
 	public String label = "a rect object";
 	private boolean GLEnabled = true;
 
+
 	public Vertex_Array vertex_array;
 
 
@@ -35,7 +39,8 @@ public class Rect extends Primitive {
 	 */
 	public Rect() {
 		Engine.rendStack.add(this);
-        vertex_array = Game_Window.bindVertexArray(Render.FILL_RECT, 7, makeVertexData());
+		shaderProgram = plainShaderProgram;
+        vertex_array = Render.bindVertexArray(Render.FILL_RECT, 8, shaderProgram, makeVertexData());
 	}
 
 	public Rect(boolean GLDisabled) {
@@ -67,6 +72,7 @@ public class Rect extends Primitive {
 		sprite_step = 0;
 
 
+
 		/*
 		System.out.print("the attributes of object ");
 		System.out.print(this);
@@ -92,7 +98,9 @@ public class Rect extends Primitive {
 			g.setColor(new Color(color_r, color_g, color_b));
 			g.fillRect(roundAndCast(origin_x), roundAndCast(origin_y), roundAndCast(width), roundAndCast(height));
 		} else {
+        	vertex_array.enabled = enabled;
             vertex_array.setData(makeVertexData());
+            vertex_array.setProgram(shaderProgram);
         }
 	}
 
@@ -159,6 +167,7 @@ public class Rect extends Primitive {
 	public void setpos(double x, double y) {
 		origin_x = x;
 		origin_y = y;
+		//origin_z = z;
 	}
 
 	/**
@@ -319,8 +328,12 @@ public class Rect extends Primitive {
 	}
 
 	private int[] makeVertexData() {
-	    return new int[] {roundAndCast(origin_x), roundAndCast(origin_y), roundAndCast(height), roundAndCast(width), color_r, color_g, color_b};
+	    return new int[] {roundAndCast(origin_x), roundAndCast(origin_y), roundAndCast(origin_z), roundAndCast(height), roundAndCast(width), color_r, color_g, color_b};
     }
+
+    public void TEMP_setZ(double z) {
+		origin_z = z;
+	}
 
 
 }

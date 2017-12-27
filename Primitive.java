@@ -1,6 +1,9 @@
 package slythr;
 
+
+
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * A super class for primitives. Does not do anything on its own, but allows multiple types of primitives to be manipulated
@@ -30,11 +33,25 @@ public class Primitive {
 	public String label;
 	public double scale;
 	public boolean draw_on_top = false;
+	public ShaderProgram shaderProgram;
+	public static ShaderProgram plainShaderProgram;
+	public Vertex_Array vertex_array;
+	public ArrayList<Property> properties = new ArrayList<>();
 
 	// primitives
 
 	public void update(Graphics g){
 
+	}
+
+	public Primitive dupe() {
+		try {
+			return (Primitive) this.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			System.out.println("ERROR: FAILED TO CLONE PRIMITIVE OBJECT!");
+			return null;
+		}
 	}
 
 	public void setOpacity(int opacity){
@@ -49,6 +66,10 @@ public class Primitive {
         Engine.throwFatalError(new SlythrError("ERROR: Attempted to call method setpos() from parent class, could be an error in SLYTHR"));
 
     }
+
+//    public void setpos(double x, double y, double z) {
+//		Engine.throwFatalError(new SlythrError("ERROR: Attempted to call method setpos(x,y,z) from parent class, could be an error in SLYTHR"));
+//	}
 
 	public double[] getpos() {
 		return new double[]{ 0, 0 };
@@ -258,7 +279,20 @@ public class Primitive {
 	    Engine.throwFatalError(new SlythrError("attempted to call method setEndpoint() from parent class, could be an error in SLYTHR"));
 	}
 
-	public int roundAndCast(double d) {
+	public void TEMP_setZ(double z) {
+		Engine.throwFatalError(new SlythrError("attempted to call method TEMP_setZ() from parent class, could be an error in SLYTHR"));
+	}
+
+	public static int roundAndCast(double d) {
 		return ((int) Math.round(d));
 	}
+
+	public void setShaderProgram(ShaderProgram ShaderProgram) {
+		shaderProgram = ShaderProgram;
+	}
+
+	public void addProperty(Property property) {
+		properties.add(property);
+	}
+
 }

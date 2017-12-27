@@ -37,7 +37,7 @@ public class Game_Window extends JPanel {
     public static Color redrawColor = Color.blue;
     public static boolean redraw = (boolean) WindowHint.windowHint_redraw.value;
     private static Color brushColor = new Color(255, 255, 255);
-    public static ArrayList<Vertex_Array> vertexBuffers = new ArrayList();
+
 
     private int cursorFar;
 
@@ -227,7 +227,7 @@ public class Game_Window extends JPanel {
                 while (true) {
                     try {
                         Physics.simulate(timescale, getGraphics());
-                    } catch (java.lang.NullPointerException e) {
+                    } catch (NullPointerException e) {
                         //pass;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -250,7 +250,7 @@ public class Game_Window extends JPanel {
                 while (!isCancelled()) {
                     try {
                         Physics.simulate(timescale, getGraphics());
-                    } catch (java.lang.NullPointerException e) {
+                    } catch (NullPointerException e) {
                         //pass;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -274,7 +274,7 @@ public class Game_Window extends JPanel {
                     for (Primitive text : update_set.makeArrayList()) {
                         try {
                             text.update(getGraphics());
-                        } catch (java.lang.NullPointerException ex) {
+                        } catch (NullPointerException ex) {
                             //pass;
                         }
                     }
@@ -332,13 +332,12 @@ public class Game_Window extends JPanel {
         super.paintComponent(g);
         local_g = g;
         Graphics2D g2d = (Graphics2D) g.create();
-        if (redraw) {
-            g2d.setColor(redrawColor);
-            g2d.fillRect(0, 0, Engine.width, Engine.height);
-        }
+//
+
+        g2d.drawImage(Render.getGLRenderSurface(), 0, 0, null);
+
         Engine.rendStack.draw(g2d);
-        g2d.drawImage(Render.GLRenderSurface, 0, 0, null);
-//        for (Vertex_Array vertexBuffer : vertexBuffers) {
+//       for (Vertex_Array vertexBuffer : vertexBuffers) {
 //            if (vertexBuffer.drawAction == DRAW_POINT) {
 //                for (int cursor = 0; cursor < vertexBuffer.vertexArray.length - (1 + vertexBuffer.stride); cursor = cursor + vertexBuffer.stride) {
 //                    g2d.setColor(new Color(vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 2], vertexBuffer.vertexArray[cursor + vertexBuffer.stride - 1], vertexBuffer.vertexArray[cursor + vertexBuffer.stride]));
@@ -379,7 +378,7 @@ public class Game_Window extends JPanel {
     public boolean mouseOverlapping(Primitive primitive) {
         try {
             return Physics.pointInObj(((int) getMousePosition().getX()), ((int) getMousePosition().getY()), primitive);
-        } catch (java.lang.NullPointerException e) {
+        } catch (NullPointerException e) {
             return false;
         }
     }
@@ -393,10 +392,5 @@ public class Game_Window extends JPanel {
         point_buffer.add(newrect);
     }
 
-    public static Vertex_Array bindVertexArray(int drawAction, int stride, int[] array) {
-        Vertex_Array new_vertexArray = new Vertex_Array(drawAction, stride, array);
-        vertexBuffers.add(new_vertexArray);
-        return new_vertexArray;
 
-    }
 }
