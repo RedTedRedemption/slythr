@@ -2,6 +2,7 @@ package slythr;
 
 import java.awt.*;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.Scanner;
 
 /**
@@ -10,6 +11,8 @@ import java.util.Scanner;
 public class Utils {
 
     private static Scanner scanner = new Scanner(System.in);
+    private static int intRegister;
+    private static Object objRegister;
 
     public static int getFrameHeight(Frame frame){
         if (Evar.os.equals("win")){
@@ -33,12 +36,18 @@ public class Utils {
         return unix_style;
     }
 
-    public static void printArray(int[] array) {
+    public synchronized static void printArray(int[] array) {
         for (int o : array) {
             System.out.print(o);
             System.out.print(", ");
         }
         System.out.println();
+    }
+
+    public synchronized static void swap(int index0, int index1, int[] arr) {
+        intRegister = arr[index0];
+        arr[index0] = arr[index1];
+        arr[index1] = intRegister;
     }
 
     public static void pause() {

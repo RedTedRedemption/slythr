@@ -14,6 +14,11 @@ public class Particle {
     private Primitive infant;
     private int lifetime;
     private boolean alive = false;
+    private Class templateClass;
+
+    public void setPrimitive(Class clazz) {
+        templateClass = clazz;
+    }
 
     public void spawn(int x, int y, int Lifetime) {
 //        for (Primitive source : subStructure) {
@@ -22,18 +27,26 @@ public class Particle {
 //            spawnAction.action(source);
 //        }
         alive = true;
-        Primitive newPart = new Rect();
+        Primitive newPart = null;
+        try {
+            newPart = (Primitive) templateClass.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         newPart.setpos(x, y);
         spawnAction.action(newPart);
         elements.add(newPart);
         element = newPart;
 
-        this.setBehavior(new ParticleAction() {
-            @Override
-            public void action(Primitive Particle) {
-                //do nothing;
-            }
-        });
+        lifetime = Lifetime;
+
+        instances.add(this);
+
+        while(element == null) {
+            //wait
+        }
 
         Engine.addSubRoutine(new SubRoutine() {
             @Override
@@ -44,9 +57,7 @@ public class Particle {
             }
         });
 
-        lifetime = Lifetime;
 
-        instances.add(this);
     }
 
     public void setSpawnAction(ParticleAction action) {
@@ -63,11 +74,16 @@ public class Particle {
     }
 
     public void tick() {
-        if (lifetime <= 0) {
+        if (lifetime <= 0 || this.element == null) {
             kill();
+            return;
         }
         lifetime = lifetime - 1;
         behavior.action(this.element);
+//        catch (java.lang.NullPointerException e) {
+//            e.printStackTrace();
+//            //pass
+//        }
     }
 
     public void kill() {

@@ -4,25 +4,57 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 /**
- * Created by teddy on 8/13/17.
+ * A surface that takes information and can be drawn to.
  */
 public class Game_Window extends JPanel {
 
+    /**
+     * Timer for repainting the window.
+     */
     Timer repaint_timer;
+    /**
+     * Time to wait between redraws.
+     */
     public int draw_wait = 6;
+    /**
+     * FPS readout text primitive.
+     */
     public Primitive fps_readout;
     private Graphics local_g;
     private Stack update_set = new Stack();
     private int window_action_delay = 12;
-    public ArrayList<String> input_array = new ArrayList<>();
-    public ArrayList<String> input_pressed_array = new ArrayList<>();
-    public ArrayList<String> input_released_array = new ArrayList<>();
-    public ArrayList<Integer> input_array_keycodes = new ArrayList<>();
-    public ArrayList<Integer> input_pressed_array_keycodes = new ArrayList<>();
-    public ArrayList<Integer> input_released_array_keycodes = new ArrayList<>();
+    /**
+     * Input array containing input from keyboard and mouse. Inputs will remain in the array until the key is released.
+     */
+    public CopyOnWriteArrayList<String> input_array = new CopyOnWriteArrayList<>();
+    /**
+     * Input array similar to input_array, except input information is only persistent for one frame. Used to indicate the key being pressed.
+     */
+    public CopyOnWriteArrayList<String> input_pressed_array = new CopyOnWriteArrayList<>();
+    /**
+     * Input array similar to input_pressed_array, except for when a key is released.
+     */
+    public CopyOnWriteArrayList<String> input_released_array = new CopyOnWriteArrayList<>();
+    /**
+     * Same as input_array using keycodes instead of strings.
+     */
+    public CopyOnWriteArrayList<Integer> input_array_keycodes = new CopyOnWriteArrayList<>();
+    /**
+     * Same as input_pressed_array except uses keycodes.
+     */
+    public CopyOnWriteArrayList<Integer> input_pressed_array_keycodes = new CopyOnWriteArrayList<>();
+    /**
+     * Same as input_released_array except uses keycodes.
+     */
+    public CopyOnWriteArrayList<Integer> input_released_array_keycodes = new CopyOnWriteArrayList<>();
     private JRootPane rootPane;
+    /**
+     * Timescale indicating how much time passes between each physics frame. Use to "speed up or slow down" time.
+     */
     public int timescale = 1;
     private Primitive console_line_0;
     private Primitive console_line_1;
@@ -33,8 +65,13 @@ public class Game_Window extends JPanel {
     private char[] console_chars = new char[144];
     private int console_cursor = 0;
     private boolean console_active = false;
-    public Stack point_buffer = new Stack();
+
+    private Stack point_buffer = new Stack();
+
     public static Color redrawColor = Color.blue;
+    /**
+     * Boolean value indicating if window should be redrawn continually. Derived from windowHint_redraw windowhint.
+     */
     public static boolean redraw = (boolean) WindowHint.windowHint_redraw.value;
     private static Color brushColor = new Color(255, 255, 255);
 
@@ -48,6 +85,11 @@ public class Game_Window extends JPanel {
     }
 
 
+    /**
+     * Instantiates a new Game window and runs all initial setup. The new Game_Window is returned to be used by user.
+     *
+     * @param frame the frame
+     */
     public Game_Window(JFrame frame) {
         super();
 
@@ -126,7 +168,14 @@ public class Game_Window extends JPanel {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                input_array.remove(new String(new char[]{e.getKeyChar()}).toLowerCase());
+                synchronized (input_array) {
+                    for (String s : input_array) {
+                        if (s.equals(new String(new char[]{e.getKeyChar()}).toLowerCase())) {
+                            input_array.remove(s);
+                        }
+                    }
+                }
+                ///input_array.remove(new String(new char[]{e.getKeyChar()}).toLowerCase());
                 input_released_array.add(new String(new char[]{e.getKeyChar()}).toLowerCase());
                 input_released_array_keycodes.add(e.getKeyCode());
             }
@@ -156,7 +205,11 @@ public class Game_Window extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                input_array.remove("mouse_pressed");
+                for (String s : input_array) {
+                    if (s.equals("mouse_pressed")) {
+                        input_array.remove("mouse_pressed");
+                    }
+                }
             }
 
             @Override
@@ -359,22 +412,51 @@ public class Game_Window extends JPanel {
     }
 
 
+    /**
+     * NONFUNCTIONAL: Adds a game_loop thread.
+     *
+     * @param game_loop the game loop
+     */
     public void add_game_loop(Game_loop game_loop){
-
+        Engine.throwFatalError(new SlythrError("SLYTHR internal error: method add_game_loop() has not been implemented"));
     }
 
+    /**
+     * Checks if a key is being pressed.
+     *
+     * @param key key being checked
+     * @return true if pressed
+     */
     public boolean keyPressed(String key) {
         return input_pressed_array.contains(key);
     }
 
+    /**
+     * Checks if a key is depressed.
+     *
+     * @param key key being checked
+     * @return true if pressed
+     */
     public boolean keyDepressed(String key) {
         return input_array.contains(key);
     }
 
+    /**
+     * Checks if a key is being released.
+     *
+     * @param key key being checked
+     * @return true if released
+     */
     public boolean keyReleased(String key) {
         return input_released_array.contains(key);
     }
 
+    /**
+     * Checks if mouse is overlapping a primitive
+     *
+     * @param primitive target primitive
+     * @return true if overlapping
+     */
     public boolean mouseOverlapping(Primitive primitive) {
         try {
             return Physics.pointInObj(((int) getMousePosition().getX()), ((int) getMousePosition().getY()), primitive);
@@ -383,6 +465,13 @@ public class Game_Window extends JPanel {
         }
     }
 
+    /**
+     * Draw point.
+     *
+     * @param x     x position
+     * @param y     y position
+     * @param color color
+     */
     public void drawPoint(double x, double y, Color color) {
         Rect newrect = new Rect(false);
         newrect.setpos(x, y);

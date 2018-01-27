@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Created by teddy on 10/3/17.
+ * Various settings and information about the engine. These can be changed by the user.
  */
 public class WindowHint<valueType> {
 

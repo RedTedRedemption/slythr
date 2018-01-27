@@ -13,38 +13,90 @@ import java.util.ArrayList;
 public class Engine {
 
 
+    /**
+     * The constant height.
+     */
     public static int height;
 
+    /**
+     * The Offset.
+     */
     public static int[] offset = {0, 20};
 
+    /**
+     * The constant width.
+     */
     public static int width;
 
+    /**
+     * The constant frame.
+     */
     public static JFrame frame = new JFrame("Slythr Game");
 
+    /**
+     * The constant rendStack.
+     */
     public static Stack rendStack = new Stack();
 
+    /**
+     * The constant loop_delay.
+     */
     public static int loop_delay = 6;
     private static Game_loop local_game_loop;
 
+    /**
+     * The constant running.
+     */
     public static boolean running = true;
     private static boolean ready = false;
 
+    /**
+     * The constant fps_count.
+     */
     public static int fps_count;
 
+    /**
+     * The constant fps.
+     */
     public static int fps;
 
     //WindowHint tags
 
+    /**
+     * Tag ID for the redraw window hint.
+     */
     public static final int WINDOW_HINT_REDRAW = 0;
+    /**
+     * Tag ID for clear color window hint.
+     */
     public static final int WINDOW_HINT_CLEAR_COLOR = 1;
+    /**
+     * Tag ID for redraw delay window hint.
+     */
     public static final int WINDOW_HINT_REDRAW_DELAY = 2;
+    /**
+     * Tag ID for periodic delay window hint.
+     */
     public static final int WINDOW_HINT_PERIODIC_DELAY = 3;
 
+    /**
+     * Boolean var indicating whether to continually redraw the window.
+     */
     public static boolean drawfps = false;
+    /**
+     * An ArrayList of all running game windows
+     */
     public static ArrayList<Game_Window> game_windows;
     private static Thread splashThread;
     private static ArrayList<ConsoleCommand> consoleCommands;
-    public static String[] previous_commands = {"", "", "", ""};
+
+    /**
+     * The Previous commands.
+     */
+    static String[] previous_commands = {"", "", "", ""};
+    /**
+     * The constant animation_buffer.
+     */
     public static Animation_Buffer animation_buffer;
 
     private static Thread gl_renderThread;
@@ -316,6 +368,8 @@ public class Engine {
     /**
      * Allow the splash to end, and the main engine window to appear. Call this after you have completed all initial setup
      * that you would like to run before the main window appears.
+     *
+     * @return the boolean
      */
     public static boolean joinSplash(){
         SplashScreen.allowEnd();
@@ -344,6 +398,12 @@ public class Engine {
         }).start();
     }
 
+    /**
+     * Add event.
+     *
+     * @param delay the delay
+     * @param event the event
+     */
     public static void addEvent(int delay, SlythrEvent event) {
         new Timer(delay, new ActionListener() {
             @Override
@@ -382,7 +442,6 @@ public class Engine {
      *
      * @param subRoutine the subroutine
      */
-
     public static void addSubRoutine(SubRoutine subRoutine){
         new Thread(new Runnable() {
             @Override
@@ -421,10 +480,21 @@ public class Engine {
         new Thread(action).start();
     }
 
+    /**
+     * Add console command.
+     *
+     * @param command   the command
+     * @param operation the operation
+     */
     public static void addConsoleCommand(String command, ConsoleOperation operation) {
         consoleCommands.add(new ConsoleCommand(command, operation));
     }
 
+    /**
+     * Console command.
+     *
+     * @param console_line the console line
+     */
     public static void console_command(String console_line) {
         int timesfound = 0;
         if (console_line.equals("")) {
@@ -446,6 +516,11 @@ public class Engine {
 
     }
 
+    /**
+     * Console print.
+     *
+     * @param s the s
+     */
     public static void console_print(String s) {
         System.out.println(s);
         previous_commands[3] = previous_commands[2];
@@ -454,6 +529,12 @@ public class Engine {
         previous_commands[0] = s;
     }
 
+    /**
+     * Sets window hint.
+     *
+     * @param tag   the tag
+     * @param value the value
+     */
     public static void setWindow_hint(int tag, Object value) {
         for (WindowHint windowHint : WindowHint.windowHints) {
             if (windowHint.tag == tag) {
@@ -462,6 +543,11 @@ public class Engine {
         }
     }
 
+    /**
+     * Throw fatal error.
+     *
+     * @param error the error
+     */
     public static void throwFatalError(Exception error) {
         String stackTrace = new String();
         for (StackTraceElement element : error.getStackTrace()) {
@@ -472,6 +558,12 @@ public class Engine {
         System.exit(1);
     }
 
+    /**
+     * Gets window hint.
+     *
+     * @param Tag the tag
+     * @return the window hint
+     */
     public static Object getWindow_hint(int Tag) {
         for (WindowHint windowHint : WindowHint.windowHints) {
             if (windowHint.tag == Tag) {

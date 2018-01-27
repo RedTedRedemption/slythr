@@ -179,15 +179,15 @@ public class Primitive {
 
 	}
 
-	public void setPhysics_velocity_x(int magnitude){
+	public void setPhysics_velocity_x(double magnitude){
 		//physics_velocity_x = magnitude;
 	}
 
-	public void setPhysics_velocity_y(int magnitude){
+	public void setPhysics_velocity_y(double magnitude){
 	//	physics_velocity_y = magnitude;
 	}
 
-	public void setPhysics_velocity(int x, int y){
+	public void setPhysics_velocity(double x, double y){
 		//physics_velocity_x = x;
 		//physics_velocity_y = y;
 	}

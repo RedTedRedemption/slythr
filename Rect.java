@@ -30,8 +30,14 @@ public class Rect extends Primitive {
 	public String label = "a rect object";
 	private boolean GLEnabled = true;
 
+	Vertex_Array vertex_arrayAB;
+	Vertex_Array vertex_arrayBC;
+	Vertex_Array vertex_arrayCD;
+	Vertex_Array vertex_arrayDA;
 
-	public Vertex_Array vertex_array;
+
+
+	public Vertex_Array vertex_array = new Vertex_Array(Render.FILL_RECT, 8, shaderProgram, makeVertexData());
 
 
 	/**
@@ -99,8 +105,12 @@ public class Rect extends Primitive {
 			g.fillRect(roundAndCast(origin_x), roundAndCast(origin_y), roundAndCast(width), roundAndCast(height));
 		} else {
         	vertex_array.enabled = enabled;
-            vertex_array.setData(makeVertexData());
+            //vertex_arrayAB.setData(new int[] {((int) (origin_x / origin_z)), ((int) (origin_y / origin_z)), (int) (origin_x + width), ((int) origin_y), color_r, color_g, color_b});
+            //vertex_arrayBC.setData(new int[] {((int) (origin_x + width)), ((int) origin_y), ((int) (origin_x + width)), ((int) (origin_y + height)), color_r, color_g, color_b});
+            //vertex_arrayCD.setData(new int[] {((int) (origin_x + width)), ((int) (origin_y + height)), ((int) (origin_x / origin_z)), ((int) ((origin_y + height) / origin_z)), color_r, color_g, color_b});
+            //vertex_arrayDA.setData(new int[] {((int) (origin_x / origin_z)), ((int) ((origin_y + height) / origin_z)), ((int) (origin_x / origin_z)), ((int) (origin_y / origin_z)), color_r, color_g, color_b});
             vertex_array.setProgram(shaderProgram);
+            vertex_array.setData(makeVertexData());
         }
 	}
 

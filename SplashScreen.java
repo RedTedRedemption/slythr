@@ -10,7 +10,7 @@ public class SplashScreen extends JWindow {
     public static JLabel watermark = new JLabel
             ("Powered by SLYTHR", JLabel.CENTER);
     public static JLabel status = new JLabel("", JLabel.LEFT);
-    public static JLabel copyright = new JLabel("Slythr Engine Copyright 2017 Theodore Herzfeld. All rights reserved.", JLabel.RIGHT);
+    public static JLabel copyright = new JLabel("Slythr Engine created by Theodore Herzfeld", JLabel.RIGHT);
     private static boolean permitEnd = false;
 
     public SplashScreen(int d) {

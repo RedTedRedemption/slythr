@@ -1,7 +1,9 @@
 package slythr;
 
-public interface Shader {
+public class Shader {
 
-    public int[] shader(int[] artifact);
+    public int[] shader(int[] artifact) {
+        return artifact;
+    }
 
 }
