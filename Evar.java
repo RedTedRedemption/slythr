@@ -21,11 +21,13 @@ public class Evar {
      * Initialize variables and set up their initial values.
      */
     public static void init(){
+        System.out.print("Initializing engine variables...");
         if (System.getProperty("os.name").contains("win")){
             os = "win";
         } else {
             os = "notwin";
         }
+        System.out.println("done");
 
     }
 

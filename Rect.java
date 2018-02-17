@@ -41,16 +41,22 @@ public class Rect extends Primitive {
 
 
 	/**
-	 * Rect constructor.
+	 * Rect constructor. Engine must be initialized or engine will kill the program.
 	 */
 	public Rect() {
+		if (!Engine.initialized) {
+			Engine.throwFatalError(new SlythrError("ERROR: Slythr must be launched before primitives can be created"));
+		}
 		Engine.rendStack.add(this);
 		shaderProgram = plainShaderProgram;
-        vertex_array = Render.bindVertexArray(Render.FILL_RECT, 8, shaderProgram, makeVertexData());
+		if (GLEnabled) {
+			vertex_array = Render.bindVertexArray(Render.FILL_RECT, 8, shaderProgram, makeVertexData());
+		}
 	}
 
 	public Rect(boolean GLDisabled) {
-        Engine.rendStack.add(this);
+        GLEnabled = false;
+		Engine.rendStack.add(this);
 	}
 
 

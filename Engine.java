@@ -3,7 +3,6 @@ package slythr;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.PrintStream;
 import java.util.ArrayList;
 
 /**
@@ -49,6 +48,7 @@ public class Engine {
      */
     public static boolean running = true;
     private static boolean ready = false;
+    public static boolean initialized = false;
 
     /**
      * The constant fps_count.
@@ -78,7 +78,18 @@ public class Engine {
      * Tag ID for periodic delay window hint.
      */
     public static final int WINDOW_HINT_PERIODIC_DELAY = 3;
-
+    /**
+     * Tag ID for TaskManager thread pool size
+     */
+    public static final int WINDOW_HINT_TASKMANAGER_COUNT = 4;
+    /**
+     * Tag ID for GLRendering disable
+     */
+    public static final int WINDOW_HINT_DISABLE_GLRENDERING = 5;
+    /**
+     * Tag ID for Window Title windowHint
+     */
+    public static final int WINDOW_HINT_WINDOW_TITLE = 6;
     /**
      * Boolean var indicating whether to continually redraw the window.
      */
@@ -101,6 +112,7 @@ public class Engine {
 
     private static Thread gl_renderThread;
 
+    public static Stack notifyStack_Key;
 
     /**
      * Initialize the engine and create a window.
@@ -112,6 +124,8 @@ public class Engine {
         try {
             splashStatus("Initializing Engine...");
 
+            notifyStack_Key = new Stack();
+
             width = Width;
             height = Height;
 
@@ -119,10 +133,14 @@ public class Engine {
             System.out.println("Showing splash");
             splashThread.start();
 
-            splashStatus("Initializing engine components");
+            splashStatus("INITIALIZING ENGINE COMPONENTS");
             Evar.init();
             WindowHint.init();
-            Render.init();
+            TaskManager.init();
+            if (!WindowHint.windowHint_disable_GLRendering.getValue()) {
+                Render.init();
+            }
+            System.out.println("===========================");
 
             if (EngineSettings.THREADED_RENDERING) {
                 System.out.println("THREADED RENDERING ACTIVE");
@@ -130,7 +148,8 @@ public class Engine {
                 System.out.print(EngineSettings.RENDER_THREADS);
                 System.out.print(" render threads...");
                 SKernel.init();
-                System.out.println("success");
+                System.out.println("rendering threads setup complete");
+                System.out.println("==============================");
             }
 
             //initializing variables
@@ -139,6 +158,7 @@ public class Engine {
             consoleCommands = new ArrayList<>();
             animation_buffer = new Animation_Buffer();
             rendStack = new Stack();
+            System.out.println("done");
 
 
             splashStatus("binding default animation buffer");
@@ -267,13 +287,17 @@ public class Engine {
             throwFatalError(e);
         }
 
+        initialized = true;
+
+        //END ENGINE SETUP
+
 
 
 
     }
 
     private static void engine_run(){
-        frame.setTitle("Slythr");
+        frame.setTitle(WindowHint.windowHint_windowTitle.getValue());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
         frame.setVisible(false);

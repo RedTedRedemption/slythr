@@ -1,7 +1,5 @@
 package slythr;
 
-import test.plainFragShader;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -118,6 +116,7 @@ public class Render {
      * Initialize the class and any necessary startup operation.
      */
     public static void init() {
+        System.out.print("Initializing render system...");
         GLRenderSurface = new BufferedImage(Engine.width, Engine.height, BufferedImage.TYPE_INT_ARGB);
         blankSurface = new BufferedImage(Engine.width, Engine.height, BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < blankSurface.getHeight(); y++) {
@@ -125,6 +124,11 @@ public class Render {
                 blankSurface.setRGB(x, y, WindowHint.windowHint_clear_color.getValue().getRGB());
             }
         }
+        int[] blankPixel = {0, 0, 0, 0, 0, 0};
+        for (int i = 0; i < blankPixels.length; i++) {
+            System.arraycopy(blankPixel, 0, blankPixels[i], 0, 6);
+        }
+
         bufferSurface = new BufferedImage(Engine.width, Engine.height, BufferedImage.TYPE_INT_ARGB);
         drawArea = new Rect(true);
         drawArea.setHeight(Engine.height);
@@ -133,14 +137,16 @@ public class Render {
         Primitive.plainShaderProgram = new ShaderProgram();
         Primitive.plainShaderProgram.linkShader(VERTEX_SHADER, new plainVertexShader());
         Primitive.plainShaderProgram.linkShader(GEOMETRY_SHADER, new plainGeometryShader());
-        Primitive.plainShaderProgram.linkShader(FRAGMENT_SHADER, new plainFragShader());
+        Primitive.plainShaderProgram.linkShader(FRAGMENT_SHADER, new plainFragmentShader());
 
         defaultProgram = new ShaderProgram();
         defaultProgram.linkShader(VERTEX_SHADER, new plainVertexShader());
         defaultProgram.linkShader(GEOMETRY_SHADER, new plainGeometryShader());
-        defaultProgram.linkShader(FRAGMENT_SHADER, new plainFragShader());
+        defaultProgram.linkShader(FRAGMENT_SHADER, new plainFragmentShader());
 
         activeProgram = Primitive.plainShaderProgram;
+
+        System.out.println("done");
 
 
     }
@@ -195,7 +201,7 @@ public class Render {
 
         SKernel.joinAll();
 
-        blit();
+        fastBlit();
 
         pixelCursor = 0;
 
@@ -204,14 +210,11 @@ public class Render {
 
         //System.arraycopy(pixels, 0, pixels, 0, pixels.length);
 
-        for (int[] pixel : pixels) {
-            pixel[x] = 0;
-            pixel[y] = 0;
-            pixel[z] = 0;
-//            pixel[r] = 0;
-//            pixel[G] = 0;
-//            pixel[b] = 0;
-        }
+        System.arraycopy(blankPixels, 0, pixels, 0, blankPixels.length);
+
+//       for (int[] pixel : pixels) {
+//
+//        }
 
 //        bufferSurface.setData(blankSurface.getRaster());
 //        try {
@@ -268,10 +271,11 @@ public class Render {
      * @return an int[] containing the artifact
      */
     public static int[] makeArtifact(Vertex_Array vertex_array, int cursor) {
-        int[] tout = new int[100];
-        for (int pointer = 0; pointer <= vertex_array.stride - 1; pointer++) {
-            tout[pointer] = vertex_array.vertexArray[cursor + pointer];
-        }
+        int[] tout = new int[vertex_array.stride];
+        System.arraycopy(vertex_array.vertexArray, cursor, tout, 0, vertex_array.stride);
+//        for (int pointer = 0; pointer <= vertex_array.stride - 1; pointer++) {
+//            tout[pointer] = vertex_array.vertexArray[cursor + pointer];
+//        }
         return tout;
     }
 
@@ -475,7 +479,7 @@ public class Render {
         try {
             intRegister = bufferSurface.getRGB(x, y);
         } catch (Exception e) {
-            intRegister = WindowHint.windowHint_clear_color.value.getRGB();
+            intRegister = WindowHint.windowHint_clear_color.getValue().getRGB();
         }
         return new int[]{
                 (intRegister >> 16) & 0xFF,
@@ -495,7 +499,7 @@ public class Render {
         try {
             intRegister = getGLRenderSurface().getRGB(x, y);
         } catch (Exception e) {
-            intRegister = WindowHint.windowHint_clear_color.value.getRGB();
+            intRegister = WindowHint.windowHint_clear_color.getValue().getRGB();
         }
         return new int[]{
                 (intRegister >> 16) & 0xFF,

@@ -2,13 +2,14 @@ package slythr;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Stacks are responsible for storage and management of Primitives. Primitives are added to the stack, and can then be drawn
  * with the draw() method.
  */
-public class Stack {
+public class Stack implements Iterable<Primitive>{
 
 	/**
 	 * An {@code ArrayList} containing the stack's primitives.
@@ -148,7 +149,7 @@ public class Stack {
 	 * @param addme the stack of {@code Primitive}s to be added to the stack.
 	 */
 	public void add(Stack addme){
-		for (Primitive obj : addme.makeArrayList()){
+		for (Primitive obj : addme){
 			stack.add(obj);
 		}
 	}
@@ -198,4 +199,8 @@ public class Stack {
 		}
 	}
 
+	@Override
+	public Iterator<Primitive> iterator() {
+		return stack.iterator();
+	}
 }

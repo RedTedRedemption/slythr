@@ -2,7 +2,10 @@ package slythr;
 
 
 import java.util.ArrayList;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class SKernel {
 
@@ -16,6 +19,8 @@ public class SKernel {
     private static ThreadPoolExecutor threadPool;
 
     public static void init() {
+
+        System.out.print("Initializing Kernel...");
 //        for (int i = 0; i < threadPool.length; i++) {
 //           // threadPool[i] = new RenderThread(null);
 //          //  threadPool[i].start();
@@ -27,7 +32,7 @@ public class SKernel {
             workerThreadPool[i] = new RenderThread(null);
         }
         initiated = true;
-
+        System.out.println("done");
     }
 
     public static void dispatch(Vertex_Array vertex_array) {

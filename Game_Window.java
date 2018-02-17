@@ -3,9 +3,7 @@ package slythr;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 
 /**
  * A surface that takes information and can be drawn to.
@@ -72,7 +70,7 @@ public class Game_Window extends JPanel {
     /**
      * Boolean value indicating if window should be redrawn continually. Derived from windowHint_redraw windowhint.
      */
-    public static boolean redraw = (boolean) WindowHint.windowHint_redraw.value;
+    public static boolean redraw = (boolean) WindowHint.windowHint_redraw.getValue();
     private static Color brushColor = new Color(255, 255, 255);
 
 
@@ -106,7 +104,7 @@ public class Game_Window extends JPanel {
         console_primitives.add(console_line_3);
 
         console_primitives.disable_all();
-        for (Primitive console_primitive : console_primitives.makeArrayList()) {
+        for (Primitive console_primitive : console_primitives) {
             console_primitive.move_to_top();
         }
 
@@ -138,6 +136,7 @@ public class Game_Window extends JPanel {
 
             @Override
             public void keyPressed(KeyEvent e) {
+                notifyStack_KeyPressed(e);
                 input_array.add(new String(new char[]{e.getKeyChar()}).toLowerCase());
                 input_array_keycodes.add(e.getKeyCode());
                 input_pressed_array.add(new String(new char[]{e.getKeyChar()}).toLowerCase());
@@ -324,14 +323,14 @@ public class Game_Window extends JPanel {
             @Override
             protected Object doInBackground() throws Exception {
                 while (!isCancelled()) {
-                    for (Primitive text : update_set.makeArrayList()) {
+                    for (Primitive text : update_set) {
                         try {
                             text.update(getGraphics());
                         } catch (NullPointerException ex) {
                             //pass;
                         }
                     }
-                    if ((boolean) WindowHint.windowHint_redraw.value) {
+                    if ((boolean) WindowHint.windowHint_redraw.getValue()) {
                         repaint();
                     }
                     Thread.sleep(repaintDelay);
@@ -384,12 +383,12 @@ public class Game_Window extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         local_g = g;
-        Graphics2D g2d = (Graphics2D) g.create();
+        //Graphics2D g2d = (Graphics2D) g.create();
 //
 
-        g2d.drawImage(Render.getGLRenderSurface(), 0, 0, null);
+        g.drawImage(Render.getGLRenderSurface(), 0, 0, null);
 
-        Engine.rendStack.draw(g2d);
+        Engine.rendStack.draw(g);
 //       for (Vertex_Array vertexBuffer : vertexBuffers) {
 //            if (vertexBuffer.drawAction == DRAW_POINT) {
 //                for (int cursor = 0; cursor < vertexBuffer.vertexArray.length - (1 + vertexBuffer.stride); cursor = cursor + vertexBuffer.stride) {
@@ -407,7 +406,7 @@ public class Game_Window extends JPanel {
 //        }
        // Engine.rendStack.draw(g2d);
         Engine.fps_count = Engine.fps_count + 1;
-        g2d.dispose();
+        //g2d.dispose();
 
     }
 
@@ -479,6 +478,22 @@ public class Game_Window extends JPanel {
         newrect.setWidth(1);
         newrect.setColor(color);
         point_buffer.add(newrect);
+    }
+
+    private static void notifyStack_KeyPressed(KeyEvent e) {
+        for (Primitive primitive : Engine.notifyStack_Key) {
+            TaskManager.dispatch(new SlythrAction() {
+                @Override
+                public void execute() {
+                    primitive.eventNotify_Key(e);
+                }
+
+                @Override
+                public void execute2() {
+
+                }
+            });
+        }
     }
 
 

@@ -115,7 +115,7 @@ public class Physics {
 	public static void simulate(int time, Graphics g){
 		//simfrom = 1 + Instant.now().get(ChronoField.INSTANT_SECONDS);
 		//physstart = Instant.now().getNano();
-		for (Primitive obj : Engine.rendStack.makeArrayList()){
+		for (Primitive obj : Engine.rendStack){
 			obj.move(time);
 
 		}
@@ -124,7 +124,7 @@ public class Physics {
 
 
 		//update text
-		for (Primitive obj : Engine.rendStack.makeArrayList()){
+		for (Primitive obj : Engine.rendStack){
 			obj.update(g);
 		}
 

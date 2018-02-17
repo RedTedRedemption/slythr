@@ -1,8 +1,6 @@
 package slythr;
 
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.util.Scanner;
 
 /**
@@ -36,8 +34,16 @@ public class Utils {
         return unix_style;
     }
 
-    public synchronized static void printArray(int[] array) {
-        for (int o : array) {
+//    public synchronized static void printArray(int[] array) {
+//        for (int o : array) {
+//            System.out.print(o);
+//            System.out.print(", ");
+//        }
+//        System.out.println();
+//    }
+
+    public synchronized static void printArray(Object[] array) {
+        for (Object o : array) {
             System.out.print(o);
             System.out.print(", ");
         }
