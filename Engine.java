@@ -3,6 +3,7 @@ package slythr;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 /**
@@ -138,6 +139,7 @@ public class Engine {
             WindowHint.init();
             TaskManager.init();
             if (!WindowHint.windowHint_disable_GLRendering.getValue()) {
+                System.out.println("GL Rendering enabled");
                 Render.init();
             }
             System.out.println("===========================");
@@ -153,7 +155,7 @@ public class Engine {
             }
 
             //initializing variables
-            splashStatus("Initializing Variables...");
+            splashStatus("Initializing stacks and arrayLists");
             game_windows = new ArrayList<>();
             consoleCommands = new ArrayList<>();
             animation_buffer = new Animation_Buffer();

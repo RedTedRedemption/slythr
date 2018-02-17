@@ -1,5 +1,6 @@
 package slythr;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Particle {

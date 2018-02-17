@@ -2,6 +2,6 @@ package slythr;
 
 public interface ParticleAction {
 
-    public void action(Primitive Particle);
+    void action(Primitive Particle);
 
 }

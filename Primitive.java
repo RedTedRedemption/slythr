@@ -175,12 +175,10 @@ public class Primitive {
 
 	public void setColor(int r, int g, int b) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void setColor(int[] colorArray) {
 		Engine.throwFatalError(new SlythrError("ERROR: attempted to call method setColor() from parent class, could be an error in SLYTHR"));
-
 	}
 
 	public void setSize(int size){

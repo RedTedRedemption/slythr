@@ -1,5 +1,7 @@
 package slythr;
 
+import javax.security.auth.callback.Callback;
+import java.lang.reflect.Type;
 import java.util.concurrent.*;
 
 public class TaskManager {

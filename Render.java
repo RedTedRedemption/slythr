@@ -1,5 +1,7 @@
 package slythr;
 
+import test.plainFragShader;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -43,6 +45,8 @@ public class Render {
     private static int[] intArrayRegister;
     private static ArrayList<Thread> renderThreads = new ArrayList<>();
 
+    private static final Object synch = new Object();
+
     private static int max_z = 0;
 
     private static final int x = 0;
@@ -74,7 +78,7 @@ public class Render {
     /**
      * ArrayList containing Vertex_Buffers that have been bound by user or library.
      */
-    public static ArrayList<Vertex_Array> vertexBuffers = new ArrayList();
+    public static ArrayList<Vertex_Array> vertexBuffers = new ArrayList<>();
 
     private static ShaderProgram activeProgram;
     /**
@@ -137,12 +141,12 @@ public class Render {
         Primitive.plainShaderProgram = new ShaderProgram();
         Primitive.plainShaderProgram.linkShader(VERTEX_SHADER, new plainVertexShader());
         Primitive.plainShaderProgram.linkShader(GEOMETRY_SHADER, new plainGeometryShader());
-        Primitive.plainShaderProgram.linkShader(FRAGMENT_SHADER, new plainFragmentShader());
+        Primitive.plainShaderProgram.linkShader(FRAGMENT_SHADER, new plainFragShader());
 
         defaultProgram = new ShaderProgram();
         defaultProgram.linkShader(VERTEX_SHADER, new plainVertexShader());
         defaultProgram.linkShader(GEOMETRY_SHADER, new plainGeometryShader());
-        defaultProgram.linkShader(FRAGMENT_SHADER, new plainFragmentShader());
+        defaultProgram.linkShader(FRAGMENT_SHADER, new plainFragShader());
 
         activeProgram = Primitive.plainShaderProgram;
 
@@ -169,7 +173,7 @@ public class Render {
                 }
             }
         }
-        synchronized (GLRenderSurface) {
+        synchronized (synch) {
             GLRenderSurface.setData(bufferSurface.getRaster());
         }
     }
@@ -324,9 +328,7 @@ public class Render {
             startingBuffer = makeArtifact(vertex_array, cursor);
             startingBuffer = activeProgram.pipeline[VERTEX_SHADER].shader(startingBuffer);
             int pointArtifact[] = new int[100];
-            for (int pointArtifactFiller = 0; pointArtifactFiller < vertex_array.stride; pointArtifactFiller++) {
-                pointArtifact[pointArtifactFiller] = startingBuffer[pointArtifactFiller];
-            }
+            System.arraycopy(startingBuffer, 0, pointArtifact, 0, vertex_array.stride);
             pointArtifact = activeProgram.pipeline[GEOMETRY_SHADER].shader(pointArtifact);
             if (shouldDrawPixel(pointArtifact[0], pointArtifact[1])) {
                 try {
