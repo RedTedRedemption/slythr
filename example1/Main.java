@@ -3,9 +3,12 @@ package example1;
 import slythr.*;
 import test.mirrorFragmentShader;
 
+import java.awt.event.KeyEvent;
+
 public class Main {
 
     public static void main(String[] args) {
+        //WindowHint.windowHint_disable_GLRendering.setValue(true);
         Engine.launch(600, 600); //launch the engine and create a window with height 600 and width 600
         Game_Window game_window = Engine.addWindow(); //create a game window on which to draw and get input and store it for later
 
@@ -33,10 +36,21 @@ public class Main {
         Primitive mirrorText = new Text("Mirror material", 12, game_window); //create a new text object
         mirrorText.setpos(mirrorRect.getpos()[0], mirrorRect.getpos()[1]); //set it to the position of the mirror object
 
+        mirrorRect.setOnEvent_Key(new SPassAction<KeyEvent>() {
+            @Override
+            public void action(KeyEvent i) {
+                if (i.getKeyChar() == ' ' && game_window.mouseOverlapping(mirrorRect)) {
+                    System.out.println("IVE BEEN CLICKED! NOOOOOO");
+                }
+            }
+        });
+
         Primitive cursorRect = new Rect(); //create a rectangle to follow the cursor
         cursorRect.setShaderProgram(positionalColorProgram); //give it a shader program
         Primitive cursorText = new Text("positional color example", 12, game_window);
 
+        Primitive testrect = new Rect(false);
+        testrect.setpos(300, 300);
 
         Particle particle = new Particle();
         Rect samplerect = new Rect();
