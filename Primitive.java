@@ -3,6 +3,7 @@ package slythr;
 
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 /**
@@ -37,11 +38,22 @@ public class Primitive {
 	public static ShaderProgram plainShaderProgram;
 	public Vertex_Array vertex_array;
 	public ArrayList<Property> properties = new ArrayList<>();
+	public boolean needsNotify_Key = false;
+	public SPassAction<KeyEvent> onEventAction_Key;
+
+	public void setOnEvent_Key(SPassAction<KeyEvent> action) {
+		onEventAction_Key = action;
+		Engine.notifyStack_Key.add(this);
+	}
+
+	public void removeOnEvent_Key() {
+		Engine.notifyStack_Key.remove(this);
+		onEventAction_Key = null;
+	}
 
 	// primitives
 
 	public void update(Graphics g){
-
 	}
 
 	public Primitive dupe() {
@@ -52,6 +64,10 @@ public class Primitive {
 			System.out.println("ERROR: FAILED TO CLONE PRIMITIVE OBJECT!");
 			return null;
 		}
+	}
+
+	public void eventNotify_Key(KeyEvent e) {
+		onEventAction_Key.action(e);
 	}
 
 	public void setOpacity(int opacity){
@@ -160,6 +176,11 @@ public class Primitive {
 	public void setColor(int r, int g, int b) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setColor(int[] colorArray) {
+		Engine.throwFatalError(new SlythrError("ERROR: attempted to call method setColor() from parent class, could be an error in SLYTHR"));
+
 	}
 
 	public void setSize(int size){
