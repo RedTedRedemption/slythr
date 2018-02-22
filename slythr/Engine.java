@@ -139,6 +139,7 @@ public class Engine {
             WindowHint.init();
             TaskManager.init();
             if (!WindowHint.windowHint_disable_GLRendering.getValue()) {
+                System.out.println("GL Rendering enabled");
                 Render.init();
             }
             System.out.println("===========================");
@@ -150,11 +151,11 @@ public class Engine {
                 System.out.print(" render threads...");
                 SKernel.init();
                 System.out.println("rendering threads setup complete");
-                System.out.println("==============================");
+                System.out.println("===========================");
             }
 
             //initializing variables
-            splashStatus("Initializing Variables...");
+            splashStatus("Initializing stacks and arrayLists");
             game_windows = new ArrayList<>();
             consoleCommands = new ArrayList<>();
             animation_buffer = new Animation_Buffer();
@@ -200,31 +201,48 @@ public class Engine {
 
             splashStatus("creating threads");
 
-            gl_renderThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-                        try {
-                            if (EngineSettings.HARDWARE_ACCELERATION) {
+            if (EngineSettings.HARDWARE_ACCELERATION) {
+                gl_renderThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            try {
                                 Render.hardwareAcceleratedRend();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            if (EngineSettings.THREADED_RENDERING) {
-                                Render.threadRend();
-                            } else {
-                                Render.render();
-                            }
-                        } catch (Exception e) {
-                            //pass;
-                        }
-
-                        try {
-                            Thread.sleep(WindowHint.windowHint_redraw_delay.getValue());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
                     }
+                });
+            } else {
+                if (EngineSettings.THREADED_RENDERING) {
+                    gl_renderThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                try {
+                                    Render.threadRend();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    gl_renderThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                try {
+                                    Render.render();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
                 }
-            });
+            }
 
             Thread fps_thread = new Thread(new Runnable() {
                 @Override

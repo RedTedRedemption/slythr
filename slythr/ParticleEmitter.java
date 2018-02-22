@@ -1,4 +1,4 @@
-//package slythr;
+package slythr;//package slythr;
 //
 //public class ParticleEmitter {
 //

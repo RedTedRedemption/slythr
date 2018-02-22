@@ -126,7 +126,7 @@ public class Line extends Primitive {
      * @param time Scale the distance by this factor
      */
     public void move(double time){
-        setpos((double) getpos()[0] + (physics_velocity_x * time), (double) getpos()[1] + (physics_velocity_y * time));
+        setpos(getpos()[0] + (physics_velocity_x * time), getpos()[1] + (physics_velocity_y * time));
     }
 
     /**

@@ -332,7 +332,7 @@ public class Game_Window extends JPanel {
                             //pass;
                         }
                     }
-                    if ((boolean) WindowHint.windowHint_redraw.getValue()) {
+                    if (WindowHint.windowHint_redraw.getValue()) {
                         repaint();
                     }
                     Thread.sleep(repaintDelay);
@@ -349,7 +349,7 @@ public class Game_Window extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 fps_readout.setText("FPS: " + Integer.toString(Engine.fps));
-                fps_readout.setpos((double) Engine.width - fps_readout.getWidth(), (double) fps_readout.getHeight());
+                fps_readout.setpos((double) Engine.width - fps_readout.getWidth(), fps_readout.getHeight());
                 if (console_active) {
                     console_input.setText(">" + new String(console_chars));
                 }

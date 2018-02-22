@@ -204,9 +204,7 @@ public class RenderThread implements Callable<Integer> {
                 startingBuffer = Render.makeArtifact(vertex_array, cursor);
                 startingBuffer = activeProgram.pipeline[VERTEX_SHADER].shader(startingBuffer);
                 int pointArtifact[] = new int[100];
-                for (int pointArtifactFiller = 0; pointArtifactFiller < vertex_array.stride; pointArtifactFiller++) {
-                    pointArtifact[pointArtifactFiller] = startingBuffer[pointArtifactFiller];
-                }
+                System.arraycopy(startingBuffer, 0, pointArtifact, 0, vertex_array.stride);
                 pointArtifact = activeProgram.pipeline[GEOMETRY_SHADER].shader(pointArtifact);
                 if (Render.shouldDrawPixel(pointArtifact[0], pointArtifact[1])) {
                     try {
@@ -310,9 +308,7 @@ public class RenderThread implements Callable<Integer> {
             startingBuffer = Render.makeArtifact(vertex_array, cursor);
             startingBuffer = activeProgram.pipeline[VERTEX_SHADER].shader(startingBuffer);
             int pointArtifact[] = new int[100];
-            for (int pointArtifactFiller = 0; pointArtifactFiller < vertex_array.stride; pointArtifactFiller++) {
-                pointArtifact[pointArtifactFiller] = startingBuffer[pointArtifactFiller];
-            }
+            System.arraycopy(startingBuffer, 0, pointArtifact, 0, vertex_array.stride);
             pointArtifact = activeProgram.pipeline[GEOMETRY_SHADER].shader(pointArtifact);
             if (Render.shouldDrawPixel(pointArtifact[0], pointArtifact[1])) {
                 try {
@@ -350,9 +346,7 @@ public class RenderThread implements Callable<Integer> {
                 for (int x = startingBuffer[0]; x <= startingBuffer[0] + startingBuffer[2]; x++) {
                     pointArtifact[0] = x;
                     pointArtifact[1] = y;
-                    for (int pointArtifactFiller = 2; pointArtifactFiller < vertex_array.stride; pointArtifactFiller++) {
-                        pointArtifact[pointArtifactFiller] = startingBuffer[pointArtifactFiller];
-                    }
+                    System.arraycopy(startingBuffer, 2, pointArtifact, 2, vertex_array.stride - 2);
 //                    pointArtifact[2] = startingBuffer[2];
 //                    pointArtifact[3] = startingBuffer[3];
 //                    pointArtifact[4] = startingBuffer[4];

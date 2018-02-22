@@ -5,6 +5,7 @@ import test.plainFragShader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -45,6 +46,8 @@ public class Render {
     private static int[] intArrayRegister;
     private static ArrayList<Thread> renderThreads = new ArrayList<>();
 
+    private static final Object synch = new Object();
+
     private static int max_z = 0;
 
     private static final int x = 0;
@@ -76,7 +79,7 @@ public class Render {
     /**
      * ArrayList containing Vertex_Buffers that have been bound by user or library.
      */
-    public static ArrayList<Vertex_Array> vertexBuffers = new ArrayList();
+    public static CopyOnWriteArrayList<Vertex_Array> vertexBuffers = new CopyOnWriteArrayList<>();
 
     private static ShaderProgram activeProgram;
     /**
@@ -171,7 +174,7 @@ public class Render {
                 }
             }
         }
-        synchronized (GLRenderSurface) {
+        synchronized (synch) {
             GLRenderSurface.setData(bufferSurface.getRaster());
         }
     }
@@ -326,9 +329,7 @@ public class Render {
             startingBuffer = makeArtifact(vertex_array, cursor);
             startingBuffer = activeProgram.pipeline[VERTEX_SHADER].shader(startingBuffer);
             int pointArtifact[] = new int[100];
-            for (int pointArtifactFiller = 0; pointArtifactFiller < vertex_array.stride; pointArtifactFiller++) {
-                pointArtifact[pointArtifactFiller] = startingBuffer[pointArtifactFiller];
-            }
+            System.arraycopy(startingBuffer, 0, pointArtifact, 0, vertex_array.stride);
             pointArtifact = activeProgram.pipeline[GEOMETRY_SHADER].shader(pointArtifact);
             if (shouldDrawPixel(pointArtifact[0], pointArtifact[1])) {
                 try {
@@ -382,7 +383,6 @@ public class Render {
                         putPixelToBuffer(pointArtifact[0], pointArtifact[1], 3, pointArtifact[4], pointArtifact[5], pointArtifact[6]);
 
                     }
-
                 }
             }
         }
@@ -463,7 +463,7 @@ public class Render {
      * @param array         array containing the data to be drawn
      * @return the new vertex array to be used by user
      */
-    public static Vertex_Array bindVertexArray(int drawAction, int stride, ShaderProgram shaderProgram, int[] array) {
+    public static synchronized Vertex_Array bindVertexArray(int drawAction, int stride, ShaderProgram shaderProgram, int[] array) {
         Vertex_Array new_vertexArray = new Vertex_Array(drawAction, stride, shaderProgram, array);
         vertexBuffers.add(new_vertexArray);
         return new_vertexArray;

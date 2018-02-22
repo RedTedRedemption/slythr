@@ -138,6 +138,12 @@ public class Rect extends Primitive {
 		color_b = color.getBlue();
 	}
 
+	public void setColor(int[] colorArray) {
+		color_r = colorArray[0];
+		color_b = colorArray[1];
+		color_g = colorArray[2];
+	}
+
 
 	/**
 	 * Set the X physics velocity of the object
