@@ -3,7 +3,6 @@ package slythr;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.PrintStream;
 import java.util.ArrayList;
 
 /**
@@ -11,6 +10,8 @@ import java.util.ArrayList;
  * engine can function properly.
  */
 public class Engine {
+
+    private static boolean do_log = false;
 
 
     /**
@@ -92,6 +93,10 @@ public class Engine {
      */
     public static final int WINDOW_HINT_WINDOW_TITLE = 6;
     /**
+     * Tag ID for Window resizing windowHint
+     */
+    public static final int WINDOW_HINT_ALLOW_RESIZE = 7;
+    /**
      * Boolean var indicating whether to continually redraw the window.
      */
     public static boolean drawfps = false;
@@ -115,6 +120,11 @@ public class Engine {
 
     public static Stack notifyStack_Key;
 
+    public static Shader plainVertexShader;
+    public static Shader plainGeometryShader;
+    public static Shader plainFragmentShader;
+
+
     /**
      * Initialize the engine and create a window.
      *
@@ -124,7 +134,15 @@ public class Engine {
     public static void launch(int Height, int Width){
         try {
             splashStatus("Initializing Engine...");
-
+            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    close();
+                }
+            }));
+            do_log = true;
+            System.out.println("logging active");
+            Logger.init();
             notifyStack_Key = new Stack();
 
             width = Width;
@@ -151,16 +169,263 @@ public class Engine {
                 System.out.print(" render threads...");
                 SKernel.init();
                 System.out.println("rendering threads setup complete");
-                System.out.println("==============================");
+                System.out.println("===========================");
             }
 
             //initializing variables
-            splashStatus("Initializing stacks and arrayLists");
+            System.out.print("Initializing stacks and arrayLists...");
             game_windows = new ArrayList<>();
             consoleCommands = new ArrayList<>();
             animation_buffer = new Animation_Buffer();
             rendStack = new Stack();
             System.out.println("done");
+
+
+            splashStatus("binding default animation buffer");
+            Animation.bind_default_animation_buffer(animation_buffer);
+
+            splashStatus("adding default console commands");
+            addConsoleCommand("help", new ConsoleOperation() {
+                @Override
+                public void operation(String args) {
+                    String stout = "";
+                    for (ConsoleCommand command : consoleCommands) {
+                        stout = stout + command.call_command + ", ";
+                    }
+                    console_print(stout);
+                }
+            });
+
+            Utils.println_Normal("Initializing plain shaders");
+            plainVertexShader = new plainVertexShader();
+            plainGeometryShader = new plainGeometryShader();
+            plainFragmentShader = new plainFragmentShader();
+
+
+            Engine.addConsoleCommand("showfps", new ConsoleOperation() {
+                @Override
+                public void operation(String args) {
+                    Engine.drawfps();
+                }
+            });
+            Engine.addConsoleCommand("hidefps", new ConsoleOperation() {
+                @Override
+                public void operation(String args) {
+                    Engine.stop_drawfps();
+                }
+            });
+
+            Engine.addConsoleCommand("exit", new ConsoleOperation() {
+                @Override
+                public void operation(String args) {
+                    console_print("Exiting by console request");
+                    System.exit(0);
+                }
+            });
+
+            splashStatus("creating threads");
+
+            if (EngineSettings.HARDWARE_ACCELERATION) {
+                Utils.println_Verbose("Creating hardware accelerated render thread");
+                gl_renderThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            try {
+                                Render.hardwareAcceleratedRend();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            } else {
+                if (EngineSettings.THREADED_RENDERING) {
+                    Utils.println_Verbose("Creating threaded rendering thread");
+                    gl_renderThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                try {
+                                    Render.threadRend();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    Utils.println_Verbose("Creating simple render thread");
+                    gl_renderThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                try {
+                                    Render.render();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+            Utils.print_Verbose("Creating FPS counter thread...");
+            Thread fps_thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Timer fps_timer = new Timer(1000, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            fps = fps_count;
+                            fps_count = 0;
+                        }
+                    });
+                    fps_timer.start();
+                }
+            }, "fps counter thread");
+
+
+            Utils.print_Verbose("Creating animation thread...");
+            Thread animation_thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Timer animation_timer = new Timer(12, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            animation_buffer.step();
+                        }
+                    });
+
+                    animation_timer.start();
+                }
+            }, "animation thread");
+            Utils.print_Verbose("done");
+
+            Thread engine_thread;
+            if (WindowHint.windowHint_Allow_Resize.getValue()) {
+                engine_thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("waiting for splash to end...");
+                        while (!ready) {
+                            //wait for splash to end
+                            try {
+                                Thread.sleep(20);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            Engine.height = frame.getHeight();
+                            Engine.width = frame.getWidth();
+
+                            //there has to be a Thread.sleep() here or it doesn't work for whatever reason. No matter, doesnt affect performance overall.
+                        }
+                        System.out.println("done");
+                        engine_run();
+                    }
+                }, "SLYTHR engine thread");
+            } else {
+
+                engine_thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("waiting for splash to end...");
+                        while (!ready) {
+                            //wait for splash to end
+                            try {
+                                Thread.sleep(20);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            //there has to be a Thread.sleep() here or it doesn't work for whatever reason. No matter, doesnt affect performance overall.
+                        }
+                        System.out.println("done");
+                        engine_run();
+                    }
+                }, "SLYTHR engine thread");
+            }
+
+            splashStatus("starting background threads");
+            animation_thread.start();
+
+            fps_thread.start();
+
+            engine_thread.start();
+
+            splashStatus("render thread started");
+
+            splashStatus("Engine launch done");
+        } catch (Exception e) {
+            throwFatalError(e);
+        }
+
+        initialized = true;
+
+        //END ENGINE SETUP
+
+
+
+
+    }
+    public static void launch(int Height, int Width, String[] args){
+        try {
+
+            for (String arg : args) {
+                if (arg.equals("-nolog")) {
+                    break;
+                }
+                do_log = true;
+                System.out.println("logging active");
+                Logger.init();
+                break;
+            }
+            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    close();
+                }
+            }));
+            Evar.init(args);
+            Utils.println_Normal("Initializing engine with arguments...");
+            notifyStack_Key = new Stack();
+
+            width = Width;
+            height = Height;
+
+            splashThread = new Thread(new SplashThread());
+            Utils.println_Normal("Showing splash");
+            splashThread.start();
+
+            splashStatus("INITIALIZING ENGINE COMPONENTS");
+
+            WindowHint.init();
+            TaskManager.init();
+            if (!WindowHint.windowHint_disable_GLRendering.getValue()) {
+                Utils.println_Normal("GL Rendering enabled");
+                Render.init();
+            }
+
+            Utils.println_Normal("===========================");
+
+            if (EngineSettings.THREADED_RENDERING) {
+                Utils.println_Normal("THREADED RENDERING ACTIVE");
+                Utils.print_Normal("Initializing ");
+                Utils.print_Normal(Integer.toString(EngineSettings.RENDER_THREADS));
+                Utils.print_Normal(" render threads...");
+                SKernel.init();
+                Utils.println_Normal("rendering threads setup complete");
+                Utils.println_Normal("===========================");
+            }
+
+            //initializing variables
+            System.out.print("Initializing stacks and arrayLists...");
+            Utils.print_Normal("Initializign stacks and arrayLists...");
+            game_windows = new ArrayList<>();
+            consoleCommands = new ArrayList<>();
+            animation_buffer = new Animation_Buffer();
+            rendStack = new Stack();
+            Utils.println_Normal("done");
 
 
             splashStatus("binding default animation buffer");
@@ -201,31 +466,48 @@ public class Engine {
 
             splashStatus("creating threads");
 
-            gl_renderThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-                        try {
-                            if (EngineSettings.HARDWARE_ACCELERATION) {
+            if (EngineSettings.HARDWARE_ACCELERATION) {
+                gl_renderThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            try {
                                 Render.hardwareAcceleratedRend();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            if (EngineSettings.THREADED_RENDERING) {
-                                Render.threadRend();
-                            } else {
-                                Render.render();
-                            }
-                        } catch (Exception e) {
-                            //pass;
-                        }
-
-                        try {
-                            Thread.sleep(WindowHint.windowHint_redraw_delay.getValue());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
                         }
                     }
+                });
+            } else {
+                if (EngineSettings.THREADED_RENDERING) {
+                    gl_renderThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                try {
+                                    Render.threadRend();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    gl_renderThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                try {
+                                    Render.render();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
                 }
-            });
+            }
 
             Thread fps_thread = new Thread(new Runnable() {
                 @Override
@@ -259,7 +541,7 @@ public class Engine {
             Thread engine_thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println("waiting for splash to end...");
+                    Utils.println_Normal("waiting for splash to end...");
                     while (!ready) {
                         //wait for splash to end
                         try {
@@ -270,7 +552,7 @@ public class Engine {
 
                         //there has to be a Thread.sleep() here or it doesn't work for whatever reason. No matter, doesnt affect performance overall.
                     }
-                    System.out.println("done");
+                    Utils.println_Normal("done");
                     engine_run();
                 }
             }, "SLYTHR engine thread");
@@ -295,7 +577,6 @@ public class Engine {
 
 
 
-
     }
 
     private static void engine_run(){
@@ -304,7 +585,7 @@ public class Engine {
         frame.setLayout(null);
         frame.setVisible(false);
         frame.pack();
-        frame.setResizable(false);
+        frame.setResizable(WindowHint.windowHint_Allow_Resize.getValue());
         frame.setSize(width, height);
         while (!ready){
             //wait for the splash to end and all initial setup to be complete - requires game-side method joinSplash() to be run
@@ -386,8 +667,8 @@ public class Engine {
      * @param text the text to display and print
      */
     public static void splashStatus(String text){
+        Utils.println_Normal(text);
         SplashScreen.setStatus(text);
-        System.out.println(text);
 
     }
 
@@ -398,6 +679,9 @@ public class Engine {
      * @return the boolean
      */
     public static boolean joinSplash(){
+        if (game_windows.size() == 0) {
+            System.out.println("WARNING: no game windows have been initialized");
+        }
         SplashScreen.allowEnd();
         try {
             splashThread.join();
@@ -576,10 +860,24 @@ public class Engine {
      */
     public static void throwFatalError(Exception error) {
         String stackTrace = new String();
+        Logger.log("throwing fatal error: " + error.getMessage());
+        for (StackTraceElement element : error.getStackTrace()) {
+            stackTrace = stackTrace + "    " + element.toString() + "\n";
+            Logger.log(element.toString());
+        }
+        JOptionPane.showMessageDialog(frame, "SLYTHR has encountered a fatal error and must shut down! \n \n " + error.getMessage() + "\n \n" + error.toString() + "\n" + stackTrace, "Slythr Has Encountered a Fatal Error", JOptionPane.ERROR_MESSAGE);
+        error.printStackTrace();
+        System.exit(1);
+    }
+
+    public static void throwFatalError(String s) {
+        String stackTrace = new String();
+        SlythrError error = new SlythrError(s);
         for (StackTraceElement element : error.getStackTrace()) {
             stackTrace = stackTrace + "    " + element.toString() + "\n";
         }
-        JOptionPane.showMessageDialog(frame, "SLYTHR has encountered a fatal error and must shut down! \n \n " + error.getMessage() + "\n" + error.toString() + "\n" + stackTrace, "Slythr Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(frame, "SLYTHR has encountered a fatal error and must shut down! \n \n " + error.getMessage() + "\n \n" + error.toString() + "\n" + stackTrace, "Slythr Has Encountered a Fatal Error", JOptionPane.ERROR_MESSAGE);
+        Logger.log("Throwing fatal error: SLYTHR has encountered a fatal error and must shut down! \n \n " + error.getMessage() + "\n \n" + error.toString() + "\n" + stackTrace);
         error.printStackTrace();
         System.exit(1);
     }
@@ -603,6 +901,13 @@ public class Engine {
         }
         return null;
 
+    }
+
+    private static void close() {
+        Utils.println_Normal("Slythr shutting down");
+        if (do_log) {
+            Logger.close();
+        }
     }
 
 

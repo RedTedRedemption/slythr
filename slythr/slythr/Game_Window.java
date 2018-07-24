@@ -3,9 +3,7 @@ package slythr;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 
 /**
  * A surface that takes information and can be drawn to.
@@ -65,6 +63,9 @@ public class Game_Window extends JPanel {
     private char[] console_chars = new char[144];
     private int console_cursor = 0;
     private boolean console_active = false;
+
+    int mouse_x = 0;
+    int mouse_y = 0;
 
     private Stack point_buffer = new Stack();
 
@@ -280,6 +281,7 @@ public class Game_Window extends JPanel {
             public void run() {
                 while (true) {
                     try {
+                        poll();
                         Physics.simulate(timescale, getGraphics());
                     } catch (NullPointerException e) {
                         //pass;
@@ -296,28 +298,28 @@ public class Game_Window extends JPanel {
             }
         }, "Physics thread");
 
-              physicsThread.start();
+        physicsThread.start();
 
-        SwingWorker physicsWorker = new SwingWorker() {
-            @Override
-            protected Object doInBackground() throws Exception {
-                while (!isCancelled()) {
-                    try {
-                        Physics.simulate(timescale, getGraphics());
-                    } catch (NullPointerException e) {
-                        //pass;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        Thread.sleep(repaintDelay);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return null;
-            }
-        };
+//        SwingWorker physicsWorker = new SwingWorker() {
+//            @Override
+//            protected Object doInBackground() throws Exception {
+//                while (!isCancelled()) {
+//                    try {
+//                        Physics.simulate(timescale, getGraphics());
+//                    } catch (NullPointerException e) {
+//                        //pass;
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    try {
+//                        Thread.sleep(repaintDelay);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                return null;
+//            }
+//        };
 
        // physicsWorker.execute();
 
@@ -460,7 +462,7 @@ public class Game_Window extends JPanel {
      */
     public boolean mouseOverlapping(Primitive primitive) {
         try {
-            return Physics.pointInObj(((int) getMousePosition().getX()), ((int) getMousePosition().getY()), primitive);
+            return Physics.pointInObj(mouse_x, mouse_y, primitive);
         } catch (NullPointerException e) {
             return false;
         }
@@ -496,6 +498,12 @@ public class Game_Window extends JPanel {
                 }
             });
         }
+    }
+
+    private void poll() {
+        mouse_x = getMousePosition().x;
+        mouse_y = getMousePosition().y;
+
     }
 
 

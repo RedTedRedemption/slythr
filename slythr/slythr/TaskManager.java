@@ -1,7 +1,5 @@
 package slythr;
 
-import javax.security.auth.callback.Callback;
-import java.lang.reflect.Type;
 import java.util.concurrent.*;
 
 public class TaskManager {
@@ -9,6 +7,7 @@ public class TaskManager {
     private static ThreadPoolExecutor threadPool;
     
     public static void init() {
+        System.out.println("===========================");
         System.out.print("Initializing task manager...");
         threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(WindowHint.windowHint_TaskManager_thread_count.getValue());
         System.out.println("done");
@@ -25,6 +24,7 @@ public class TaskManager {
                 }
             }
         });
+        System.out.println("===========================");
     }
     
     public static void dispatch(SlythrAction action) {

@@ -1,6 +1,5 @@
 package slythr;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Particle {
@@ -9,16 +8,33 @@ public class Particle {
     private ArrayList<Primitive> elements = new ArrayList<>();
     public static ArrayList<Particle> instances = new ArrayList<>();
     public Primitive element;
-    private ParticleAction spawnAction;
-    private ParticleAction behavior;
+    private boolean GLEnabled = true;
+    private ParticleAction spawnAction = new ParticleAction() {
+        @Override
+        public void action(Primitive Particle) {
+
+        }
+    };
+    private ParticleAction behavior = new ParticleAction() {
+        @Override
+        public void action(Primitive Particle) {
+
+        }
+    };
     private Primitive infant;
     private int lifetime;
     private boolean alive = false;
-    private Class templateClass;
+    private Primitive templateClass;
 
-    public void setPrimitive(Class clazz) {
-        templateClass = clazz;
+    public void setPrimitive(Primitive template) {
+        templateClass = template;
+        templateClass.disable();
     }
+
+    public void setGLEnabled(boolean b) {
+        GLEnabled = b;
+    }
+
 
     public void spawn(int x, int y, int Lifetime) {
 //        for (Primitive source : subStructure) {
@@ -28,12 +44,10 @@ public class Particle {
 //        }
         alive = true;
         Primitive newPart = null;
-        try {
-            newPart = (Primitive) templateClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        if (!GLEnabled) {
+            newPart =templateClass.newMe(false);
+        } else {
+            newPart = templateClass.newMe();
         }
         newPart.setpos(x, y);
         spawnAction.action(newPart);

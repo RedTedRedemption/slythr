@@ -314,4 +314,14 @@ public class Primitive {
 		properties.add(property);
 	}
 
+	public Primitive newMe() {
+		Engine.throwFatalError(new SlythrError("attempted to call method newMe() from parent class, could be an error in SLYTHR"));
+		return null;
+	}
+
+	public Primitive newMe(boolean b) {
+		Engine.throwFatalError(new SlythrError("attempted to call method newMe() from parent class, could be an error in SLYTHR"));
+		return null;
+	}
+
 }

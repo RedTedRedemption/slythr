@@ -158,7 +158,11 @@ public class Rect extends Primitive {
 	 * @param magnitude
 	 */
 
-	public void setPhysics_velocity_y(int magnitude){
+	public void setPhysics_velocity_x (double magnitude) {
+		physics_velocity_x = magnitude;
+	}
+
+	public void setPhysics_velocity_y (int magnitude){
 		physics_velocity_y = magnitude;
 	}
 
@@ -167,7 +171,16 @@ public class Rect extends Primitive {
 	 * @param x
 	 * @param y
 	 */
+
+	public void setPhysics_velocity_y (double magnitude) {
+		physics_velocity_y = magnitude;
+	}
 	public void setPhysics_velocity(int x, int y){
+		physics_velocity_x = x;
+		physics_velocity_y = y;
+	}
+
+	public void setPhysics_velocity(double x, double y){
 		physics_velocity_x = x;
 		physics_velocity_y = y;
 	}
@@ -357,5 +370,11 @@ public class Rect extends Primitive {
 		origin_z = z;
 	}
 
+	public Primitive newMe() {
+		return new Rect();
+	}
 
+	public Primitive newMe(boolean b) {
+		return new Rect(false);
+	}
 }

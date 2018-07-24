@@ -1,6 +1,6 @@
 package slythr;
 
-import com.aparapi.Kernel;
+
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;

@@ -17,7 +17,7 @@ public class SplashThread implements Runnable {
         //System.out.println("showing splash...");
         splash = new SplashScreen(3000);
         splash.showSplash();
-        System.out.println("splash done");
+        System.out.println("splash finished displaying - waiting on engine");
     }
 
 }

@@ -1,8 +1,6 @@
 package slythr;
 
 
-import java.lang.reflect.Type;
-
 public class ReturnAction<T>{
 
     public Class typeClass = ((T) new Object()).getClass();

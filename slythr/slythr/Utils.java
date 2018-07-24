@@ -1,8 +1,6 @@
 package slythr;
 
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.util.Scanner;
 
 /**
@@ -62,7 +60,42 @@ public class Utils {
         scanner.next();
     }
 
+    public static void println_Normal(String s) {
+        Logger.log(s);
+        if (Evar.verbosityLevel >= Evar.VERBOSITY_NORMAL) {
+            System.out.println(s);
+        }
+    }
 
+    public static void print_Normal(String s) {
+        Logger.log_inline(s);
+        if (Evar.verbosityLevel >= Evar.VERBOSITY_NORMAL) {
+            System.out.print(s);
+        }
+    }
 
+    public static void println_Verbose(String s) {
+        Logger.log(s);
+        if (Evar.verbosityLevel >= Evar.VERBOSITY_VERBOSE) {
+            System.out.println(s);
+        }
+    }
 
+    public static void print_Verbose(String s) {
+        Logger.log_inline(s);
+        if (Evar.verbosityLevel >= Evar.VERBOSITY_VERBOSE) {
+            System.out.print(s);
+        }
+    }
+
+    public static String arrayToString(int[] arr) {
+        String s = new String();
+        s = s + "{";
+        for (int i : arr) {
+            s = s + i + ", ";
+        }
+        s = s + "}";
+        s = s.replace(", }", "}");
+        return s;
+    }
 }

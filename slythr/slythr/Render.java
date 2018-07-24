@@ -1,10 +1,10 @@
 package slythr;
 
-import test.plainFragShader;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -78,7 +78,7 @@ public class Render {
     /**
      * ArrayList containing Vertex_Buffers that have been bound by user or library.
      */
-    public static ArrayList<Vertex_Array> vertexBuffers = new ArrayList<>();
+    public static CopyOnWriteArrayList<Vertex_Array> vertexBuffers = new CopyOnWriteArrayList<>();
 
     private static ShaderProgram activeProgram;
     /**
@@ -103,6 +103,8 @@ public class Render {
      */
     public static final int FILL_TRIANGLE = 3;
 
+    private static final int[] primitiveMinSizes = {6, 7, 8};
+
     /**
      * Tag ID indicating a shader's role and location in pipeline. Used for vertex shaders.
      */
@@ -120,12 +122,13 @@ public class Render {
      * Initialize the class and any necessary startup operation.
      */
     public static void init() {
+        System.out.println("===========================");
         System.out.print("Initializing render system...");
         GLRenderSurface = new BufferedImage(Engine.width, Engine.height, BufferedImage.TYPE_INT_ARGB);
         blankSurface = new BufferedImage(Engine.width, Engine.height, BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < blankSurface.getHeight(); y++) {
             for (int x = 0; x < blankSurface.getWidth(); x++) {
-                blankSurface.setRGB(x, y, WindowHint.windowHint_clear_color.getValue().getRGB());
+                blankSurface.setRGB(x, y, Color.blue.getRGB());
             }
         }
         int[] blankPixel = {0, 0, 0, 0, 0, 0};
@@ -141,16 +144,17 @@ public class Render {
         Primitive.plainShaderProgram = new ShaderProgram();
         Primitive.plainShaderProgram.linkShader(VERTEX_SHADER, new plainVertexShader());
         Primitive.plainShaderProgram.linkShader(GEOMETRY_SHADER, new plainGeometryShader());
-        Primitive.plainShaderProgram.linkShader(FRAGMENT_SHADER, new plainFragShader());
+        Primitive.plainShaderProgram.linkShader(FRAGMENT_SHADER, new plainFragmentShader());
 
         defaultProgram = new ShaderProgram();
         defaultProgram.linkShader(VERTEX_SHADER, new plainVertexShader());
         defaultProgram.linkShader(GEOMETRY_SHADER, new plainGeometryShader());
-        defaultProgram.linkShader(FRAGMENT_SHADER, new plainFragShader());
+        defaultProgram.linkShader(FRAGMENT_SHADER, new plainFragmentShader());
 
         activeProgram = Primitive.plainShaderProgram;
 
         System.out.println("done");
+        System.out.println("===========================");
 
 
     }
@@ -160,7 +164,7 @@ public class Render {
      */
     public static void render() {
         if (activeProgram.pipeline[VERTEX_SHADER] == null || activeProgram.pipeline[GEOMETRY_SHADER] == null || activeProgram.pipeline[FRAGMENT_SHADER] == null) {
-            Engine.throwFatalError(new SlythrError("ERROR: INCOMPLETE SHADER PROGRAM!"));
+            Engine.throwFatalError(new SlythrError("ERROR: INCOMPLETE SHADER PROGRAM FOR VERTEX DATA AT " + activeProgram));
         }
         bufferSurface.setData(blankSurface.getRaster());
         for (Vertex_Array vertex_array : vertexBuffers) {
@@ -382,7 +386,6 @@ public class Render {
                         putPixelToBuffer(pointArtifact[0], pointArtifact[1], 3, pointArtifact[4], pointArtifact[5], pointArtifact[6]);
 
                     }
-
                 }
             }
         }
@@ -463,11 +466,20 @@ public class Render {
      * @param array         array containing the data to be drawn
      * @return the new vertex array to be used by user
      */
-    public static Vertex_Array bindVertexArray(int drawAction, int stride, ShaderProgram shaderProgram, int[] array) {
+    public static synchronized Vertex_Array bindVertexArray(int drawAction, int stride, ShaderProgram shaderProgram, int[] array) {
+        Logger.log_inline("binding vertex array: drawaction=" + drawAction + " stride=" + stride + " shaderprogram=" + shaderProgram + " arr=" + Utils.arrayToString(array) + "...");
+        if (stride < primitiveMinSizes[drawAction]) {
+            Logger.log("failed to bind vertex array - the stride for array " + Utils.arrayToString(array) + " is too short for a draw action of type " + drawAction + ".  It should be at least " + primitiveMinSizes[drawAction]);
+            Engine.throwFatalError("VERTEX_BINDING_ERROR: Stride of vertex array is too short. See log '" + Logger.getLogName() + "'");
+        }
+        if (array.length % stride != 0) {
+            Logger.log("failed to bind vertex array - the length of the data array (" + array.length + ") is not cleanly divisible by the given stride (" + stride + ")");
+            Engine.throwFatalError("VERTEX_BINDING_ERROR: Length of data array is not cleanly divisible by the stride. See log " + Logger.getLogName());
+        }
         Vertex_Array new_vertexArray = new Vertex_Array(drawAction, stride, shaderProgram, array);
         vertexBuffers.add(new_vertexArray);
+        Logger.log("success");
         return new_vertexArray;
-
     }
 
     /**
@@ -512,8 +524,11 @@ public class Render {
 
     private static void fastBlit() {
         for (int[] pixel : pixels) {
-            bufferSurface.setRGB(pixel[x], pixel[y], convertToRBG_INT(pixel[r], pixel[G], pixel[b]));
+            try {
+                bufferSurface.setRGB(pixel[x], pixel[y], convertToRBG_INT(pixel[r], pixel[G], pixel[b]));
+            } catch (java.lang.ArrayIndexOutOfBoundsException e) {
 
+            }
         }
     }
 

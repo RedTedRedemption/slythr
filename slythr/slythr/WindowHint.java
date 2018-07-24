@@ -57,7 +57,7 @@ public class WindowHint<valueType> {
         }
     }, EngineSettings.DEFAULT_THREAD_COUNT);
 
-    public static WindowHint<Boolean> windowHint_disable_GLRendering = windowHint_disable_GLRendering = new WindowHint<>(Engine.WINDOW_HINT_DISABLE_GLRENDERING, new SlythrAction() {
+    public static WindowHint<Boolean> windowHint_disable_GLRendering = new WindowHint<>(Engine.WINDOW_HINT_DISABLE_GLRENDERING, new SlythrAction() {
         @Override
         public void execute() {
             if (Engine.initialized) {
@@ -70,8 +70,22 @@ public class WindowHint<valueType> {
 
         }
     }, false);
+    public static WindowHint<Boolean> windowHint_Allow_Resize = new WindowHint<>(Engine.WINDOW_HINT_ALLOW_RESIZE, new SlythrAction() {
+        @Override
+        public void execute() {
+            if (Engine.initialized) {
+                Engine.throwFatalError(new SlythrError("ERROR: Cannot change windowHint_Allow_Resize after engine launch"));
+            }
+        }
+
+        @Override
+        public void execute2() {
+
+        }
+    }, false);
 
     public static void init() {
+        System.out.println("===========================");
         System.out.print("Initializing window hints...");
 
 
@@ -106,6 +120,7 @@ public class WindowHint<valueType> {
 
         initialized = true;
         System.out.println("done");
+        System.out.println("===========================");
     }
 
     public WindowHint(int Tag, SlythrAction onChange, valueType initialValue) {

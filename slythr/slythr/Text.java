@@ -138,6 +138,10 @@ public class Text extends Primitive{
     	self_color = new Color(r, g, b);
 	}
 
+	public void setColor(int[] colorArray) {
+		self_color = new Color(colorArray[0], colorArray[1], colorArray[2]);
+	}
+
 	public void draw(Graphics g) {
 		if (enabled) {
 			g.setColor(self_color);
